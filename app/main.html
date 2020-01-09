@@ -5,13 +5,22 @@
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <link href = "https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel = "stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
         <script src = "animations.js"></script>
     </head>
     <body>
         <!-- Search Bar -->
         <div id = "searchBarDiv">
+            <div class = "labels">
+                <div id = "stocks">Stocks</div>
+                <div id = "currency">Currency</div>
+                <div id = "cryptocurrency">Cryptocurrency</div>
+            </div>
             <input id = "searchBar" type = "text" spellcheck = "false" autocomplete = "off" autocorrect = "off">
             <img src = "searchicon.png" id = "searchIcon">
+            <div id = "options">
+                <div class = "dropdownAppender"></div>
+            </div>
         </div>
         <div id = "searchDivider"></div>
     </body>

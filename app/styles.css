@@ -5,7 +5,7 @@
     --colourDarkImperialBlue: #0B4F6C;
     --colourCyan: #01BAEF;
     --colourGhostWhite: #FBFBFF;
-    --colourSoniceSilver: #757575;
+    --colourSonicSilver: #757575;
     --backgroundColour: #121212;
     --searchBarVerticalOffset: 30vh;
     --searchBarHorizontalOffset: 50vw;
@@ -19,6 +19,8 @@ body {
     background-color: var(--backgroundColour);
     font-family: var(--mainFont);
 }
+
+/* Search Bar */
 
 #searchBarDiv {
     position: absolute;
@@ -39,13 +41,7 @@ body {
     padding-bottom: 7px;
     background-color: transparent;
     color: var(--colourGhostWhite);
-    transition: 0.125s;
-}
-
-#searchBar:focus, #searchBar:hover {
-    border: 1.5px solid var(--colourCyan);
-    transition: 0.125s;
-    box-shadow: var(--colourCyan) 0px 0px 8px 0px;
+    transition: 0.3s;
 }
 
 #searchIcon {
@@ -65,4 +61,72 @@ body {
     margin-top: calc(var(--searchBarVerticalOffset) + 0.5 * var(--searchBarHeightsize));  
     z-index: -1;
     opacity: 0;
+}
+
+#options {
+    width: var(--searchBarWidthsize);
+    height: 0px;
+    border-radius: 25px;
+    border: none;
+    background-color: transparent;
+    position: absolute;
+}
+
+/* Labels */
+.labels {
+    display: flex;
+    position: absolute;
+    margin-top: -45px;
+    margin-left: 45px;
+    color: rgb(120, 120, 120);
+    width: 300px;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+#stocks, #currency, #cryptocurrency {
+    transition: 0.2s;
+}
+
+#stocks:hover, #currency:hover, #cryptocurrency:hover {
+    cursor: pointer;
+    color: var(--colourGhostWhite);
+    transition: 0.2s;
+}
+
+.dropdownElementMaster {
+    display: flex;
+    justify-content: flex-start;
+    width: calc(var(--searchBarWidthsize) - 64px);
+    color: var(--colourGhostWhite);
+    padding-left: 60px;
+    height: 35px;
+    cursor: pointer;
+    padding-top: 13px;
+    border-radius: 25px;
+    font-size: 14px;
+    margin-left: 2px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+#itemIcon {
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--colourCyan);
+    position: absolute;
+    margin-left: -36px;
+    margin-top: 3px;
+    opacity: 70%;
+}
+
+#itemShortName {
+    flex-basis: 1;
+    width: 100px;
+}
+
+#itemLongName {
+    flex-basis: 2;
 }
