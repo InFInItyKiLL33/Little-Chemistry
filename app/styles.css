@@ -70,6 +70,12 @@ body {
     border: none;
     background-color: transparent;
     position: absolute;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
 }
 
 /* Labels */
@@ -100,14 +106,13 @@ body {
     width: calc(var(--searchBarWidthsize) - 64px);
     color: var(--colourGhostWhite);
     padding-left: 60px;
-    height: 35px;
+    height: 36px;
     cursor: pointer;
     padding-top: 13px;
     border-radius: 25px;
     font-size: 14px;
     margin-left: 2px;
     margin-top: 1px;
-    margin-bottom: 1px;
 }
 
 #itemIcon {

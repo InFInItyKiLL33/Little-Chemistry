@@ -1,8 +1,15 @@
 function getSearch() {
     // change the following line for real data when available
     availableStocks = {
-        "Apple Inc.": "AAPL",
+        "Adobe Inc": "ADBE",
         "Alphabet Inc Class A": "GOOGL",
+        "Amazon.com, Inc.": "AMZN",
+        "American Airlines Group Inc": "AAL",
+        "Apple Inc.": "AAPL",
+        "Autodesk, Inc.": "ADSK",
+        "Facebook, Inc. Common Stock": "FB",
+        "Microsoft Corporation": "MSFT",
+        "Singapore Airlines Ltd.": "C6L",
         "Tesla Inc": "TSLA"
     };
     availableCurrency = {
@@ -107,12 +114,12 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                 multiplier = 1;
             };
             $("#searchBar").animate({ // dropdown animation
-                height: (multiplier * 50 + 50).toString() + "px",
+                height: (multiplier * 50 + 52).toString() + "px",
                 paddingBottom: (multiplier * 50 + 7).toString() + "px"
             },  0);
             $("#options").animate({ // available options master div
                 height: (multiplier * 50).toString() + "px",
-                marginTop: (multiplier * -50).toString() + "px"
+                marginTop: (multiplier * -50 - 2).toString() + "px"
             }, 0);
             $("#searchDivider").animate({ // show the divider between searchbar and options
                 opacity: "1"
