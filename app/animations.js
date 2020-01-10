@@ -200,6 +200,7 @@ function searchBarUnHighlight() {
 var searchContent = 0; // 0 for stocks, 1 for currency, 2 for crypto
 var previousSearch = ""; // to disable refresh if there is no change
 var searchBarFocused = false;
+var currencyChangeClicked = 0;
 
 $(document).ready(function() {
     $("#stocks").animate({
@@ -249,6 +250,71 @@ $(document).ready(function() {
         if ($("#searchBar").val() == "") {
             searchBarUnHighlight();
             searchBarFocused = false;
+        };
+    });
+    $("#searchCurrencyList1").click(function() {
+        if (currencyChangeClicked == 0) {
+            $("#searchCurrency").animate({
+                height: "350px",
+                backgroundColor: "#333333",
+                borderRadius: "20px"
+            }, 250);
+            // $(".searchCurrencyList").show(300);
+            $(".searchCurrencyList").animate({
+                opacity: "1",
+            }, 250);
+            $(".searchCurrencyList").css({
+                cursor: "pointer"
+            });
+            currencyChangeClicked = 1;
+        } else {
+            $("#searchCurrency").animate({
+                height: "35px",
+                backgroundColor: "#121212",
+                borderRadius: "25px"
+            }, 250);
+            $(".searchCurrencyList").animate({
+                opacity: "0"
+            }, 10);
+            $(".searchCurrencyList").css({
+                cursor: "default"
+            });
+            $("#searchCurrencyList1").css({
+                cursor: "pointer"
+            });
+            $("#searchCurrencyList1").stop().animate({
+                opacity: "1"
+            }, 0);
+            currencyChangeClicked = 0;
+        };
+    });
+    $("#searchCurrencyList1").hover(function() {
+        $("#searchCurrency").animate({
+            backgroundColor: "#333333",
+            borderRadius: "20px"
+        }, 150);
+    }, function() {
+        if (currencyChangeClicked == 0) {
+            $("#searchCurrency").animate({
+                height: "35px",
+                backgroundColor: "#121212",
+                borderRadius: "25px"
+            }, 150);
+        };
+    });
+    $(".searchCurrencyList").hover(function() {
+        if ($(this).attr("id") != "searchCurrencyList1") {
+            $(this).animate({
+                color: "#FBFBFF",
+                backgroundColor: "#333333"
+            }, 100);
+        };
+    }, function() {
+        if ($(this).attr("id") != "searchCurrencyList1") {
+            $(this).animate({
+                color: "#787878",
+                backgroundColor: "121212"
+            }, 100);
         };
     });
 });
