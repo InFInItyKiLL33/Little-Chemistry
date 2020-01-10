@@ -135,3 +135,49 @@ body {
 #itemLongName {
     flex-basis: 2;
 }
+
+#noResultsFoundText {
+    color: var(--colourGhostWhite);
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    padding-left: calc(var(--searchBarWidthsize) / 2 - 125px);
+}
+
+#searchCurrency {
+    /* padding-top: 5px; */
+    text-align: center;
+    margin-left: calc(100vw - 90px);
+    width: 60px;
+    height: 35px;
+    border: 1px solid var(--colourGhostWhite);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+
+}
+
+.searchCurrencyList {
+    display: none;
+    color: var(--colourGhostWhite);
+    height: 27px;
+    width: 60px;
+    margin-bottom: 10px;
+    padding-top: 8px;
+    /* cursor: pointer; */
+    background-color: transparent;
+    transition: 0.2s;
+}
+
+#searchCurrency:hover {
+    background-color: #333333;
+    transition: 0.2s;
+    height: 35px;
+    border-radius: 20px;
+}
+
+#searchCurrencyList1 {
+    /* opacity: 1; */
+    display: block;
+    transition: 0.2s;
+}

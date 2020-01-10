@@ -104,6 +104,7 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
             var displayableList = getSearch(); // search for appropriate items
             var displayableListLengths = [-1, -1, -1]; // lengths of each list in displayableList
             var multiplier = 0; // how much should the search bar drop down by
+            var lengthsSum = 0;
             displayableListLengths[searchContent] = displayableList[searchContent].length;
             if (displayableListLengths[searchContent] != 0) {
                 multiplier += (displayableListLengths[searchContent]);
@@ -125,12 +126,24 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                 opacity: "1"
             }, 50);
             setTimeout(function() {
-                for (var i = 0; i < displayableListLengths[searchContent]; i++) {
+                for (var i = 0; i < 3; i++) {
+                    lengthsSum += displayableListLengths[i];
+                };
+                console.log(lengthsSum);
+                if (lengthsSum != -2) {
+                    for (var i = 0; i < displayableListLengths[searchContent]; i++) {
+                        $(".dropdownAppender").append(
+                            "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
+                            + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
+                            + "<div class = 'dropdownElement' id = 'itemShortName'>" + displayableList[searchContent][i][1] + "</div>" 
+                            + "<div class = 'dropdownElement' id = 'itemLongName'>" + displayableList[searchContent][i][0] + "</div>" 
+                            + "</div>"
+                        );
+                    };
+                } else {
                     $(".dropdownAppender").append(
                         "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
-                        + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
-                        + "<div class = 'dropdownElement' id = 'itemShortName'>" + displayableList[searchContent][i][1] + "</div>" 
-                        + "<div class = 'dropdownElement' id = 'itemLongName'>" + displayableList[searchContent][i][0] + "</div>" 
+                        + "<div class = 'dropdownElement' id = 'noResultsFoundText'>No Results Found</div>"
                         + "</div>"
                     );
                 };
