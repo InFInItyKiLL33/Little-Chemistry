@@ -130,12 +130,11 @@ body {
 }
 
 #itemShortName {
-    flex-basis: 1;
     width: 100px;
 }
 
 #itemLongName {
-    flex-basis: 2;
+    width: 575px;
 }
 
 #noResultsFoundText {

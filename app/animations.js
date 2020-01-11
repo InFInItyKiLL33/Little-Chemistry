@@ -23,6 +23,8 @@ function getSearch() {
         "Ripple": "XRP",
         "Litecoin": "LTC"
     };
+    currentPrice = 987.65;
+    currentTrend = 2; // 0 for down, 1 for neutral, 2 for up
     // End of to-change
     // vars of list. Part 1 is any inititals matching. Part 2 is if the key is cointained in any part of the string. Part 2 shows after Part 1.
     var availableStocksList = []
@@ -120,7 +122,7 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
             },  0);
             $("#options").animate({ // available options master div
                 height: (multiplier * 50).toString() + "px",
-                marginTop: (multiplier * -50 - 2).toString() + "px"
+                marginTop: (multiplier * - 50 - 2).toString() + "px"
             }, 0);
             $("#searchDivider").animate({ // show the divider between searchbar and options
                 opacity: "1"
@@ -129,16 +131,33 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                 for (var i = 0; i < 3; i++) {
                     lengthsSum += displayableListLengths[i];
                 };
-                console.log(lengthsSum);
                 if (lengthsSum != -2) {
                     for (var i = 0; i < displayableListLengths[searchContent]; i++) {
+                        // Change the following codes to get real data once available
+                        currentPrice = Math.round(Math.random() * 10000)/100;
+                        currentTrend = Math.round(Math.random() * 2);
+                        // Change end
                         $(".dropdownAppender").append(
                             "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
                             + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
                             + "<div class = 'dropdownElement' id = 'itemShortName'>" + displayableList[searchContent][i][1] + "</div>" 
                             + "<div class = 'dropdownElement' id = 'itemLongName'>" + displayableList[searchContent][i][0] + "</div>" 
+                            + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + currentPrice + "</div>"
                             + "</div>"
                         );
+                        if (currentTrend == 2) {
+                            $("#itemPrice" + i.toString()).animate({
+                                color: "#32a852"
+                            }, 0);
+                        } else if (currentTrend == 0) {
+                            $("#itemPrice" + i.toString()).animate({
+                                color: "#a83232"
+                            }, 0);
+                        } else {
+                            $("#itemPrice" + i.toString()).animate({
+                                color: "#696969"
+                            }, 0);
+                        };
                     };
                 } else {
                     $(".dropdownAppender").append(
