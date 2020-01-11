@@ -196,13 +196,52 @@ function searchBarUnHighlight() {
     }, 200);
 };
 
+function searchCurrency1Click() {
+    if (currencyChangeClicked == 0) {
+        $("#searchCurrency").animate({
+            height: "350px",
+            backgroundColor: "#333333",
+            borderRadius: "10px"
+        }, 250);
+        // $(".searchCurrencyList").show(300);
+        $(".searchCurrencyList").animate({
+            opacity: "1",
+        }, 250);
+        $(".searchCurrencyList").css({
+            cursor: "pointer"
+        });
+        currencyChangeClicked = 1;
+    } else {
+        $("#searchCurrency").animate({
+            height: "35px",
+            backgroundColor: "#121212",
+            borderRadius: "12.5px"
+        }, 250);
+        $(".searchCurrencyList").animate({
+            opacity: "0"
+        }, 10);
+        $(".searchCurrencyList").css({
+            cursor: "default"
+        });
+        $("#searchCurrencyList1").css({
+            cursor: "pointer"
+        });
+        $("#searchCurrencyList1").stop().animate({
+            opacity: "1"
+        }, 0);
+        currencyChangeClicked = 0;
+    };
+};
+
 // Global Variables
 var searchContent = 0; // 0 for stocks, 1 for currency, 2 for crypto
 var previousSearch = ""; // to disable refresh if there is no change
 var searchBarFocused = false;
 var currencyChangeClicked = 0;
+var supportedCurrencies = ["USD", "SGD", "EUR", "JPY", "CNY", "GBP", "CAD", "INR", "BTC", "ETH"]
+var currentCurrency = "USD"
 
-$(document).ready(function() {
+function mainCode() {
     $("#stocks").animate({
         color: "#FBFBFF"
     }, 0);
@@ -253,52 +292,17 @@ $(document).ready(function() {
         };
     });
     $("#searchCurrencyList1").click(function() {
-        if (currencyChangeClicked == 0) {
-            $("#searchCurrency").animate({
-                height: "350px",
-                backgroundColor: "#333333",
-                borderRadius: "20px"
-            }, 250);
-            // $(".searchCurrencyList").show(300);
-            $(".searchCurrencyList").animate({
-                opacity: "1",
-            }, 250);
-            $(".searchCurrencyList").css({
-                cursor: "pointer"
-            });
-            currencyChangeClicked = 1;
-        } else {
-            $("#searchCurrency").animate({
-                height: "35px",
-                backgroundColor: "#121212",
-                borderRadius: "25px"
-            }, 250);
-            $(".searchCurrencyList").animate({
-                opacity: "0"
-            }, 10);
-            $(".searchCurrencyList").css({
-                cursor: "default"
-            });
-            $("#searchCurrencyList1").css({
-                cursor: "pointer"
-            });
-            $("#searchCurrencyList1").stop().animate({
-                opacity: "1"
-            }, 0);
-            currencyChangeClicked = 0;
-        };
+        searchCurrency1Click();
     });
     $("#searchCurrencyList1").hover(function() {
         $("#searchCurrency").animate({
-            backgroundColor: "#333333",
-            borderRadius: "20px"
+            backgroundColor: "#333333"
         }, 150);
     }, function() {
         if (currencyChangeClicked == 0) {
             $("#searchCurrency").animate({
                 height: "35px",
-                backgroundColor: "#121212",
-                borderRadius: "25px"
+                backgroundColor: "#121212"
             }, 150);
         };
     });
@@ -307,14 +311,39 @@ $(document).ready(function() {
             $(this).animate({
                 color: "#FBFBFF",
                 backgroundColor: "#333333"
-            }, 100);
+            }, 75);
         };
     }, function() {
         if ($(this).attr("id") != "searchCurrencyList1") {
             $(this).animate({
                 color: "#787878",
-                backgroundColor: "121212"
-            }, 100);
+                backgroundColor: "#121212"
+            }, 75);
         };
     });
+    $(".searchCurrencyList").click(function() {
+        if ($(this).attr("id") != "searchCurrencyList1") {
+            var clickedCurrency = $(this).html();
+            var supportedCurrenciesTemp = [clickedCurrency];
+            for (var itemIndex = 0; itemIndex < supportedCurrencies.length; itemIndex++) {
+                if (supportedCurrencies[itemIndex] != clickedCurrency) {
+                    supportedCurrenciesTemp.push(supportedCurrencies[itemIndex]);
+                };
+            };
+            $(".searchCurrencyList").remove();
+            for (var i = 0; i < supportedCurrencies.length; i++) {
+                if (i != supportedCurrencies.length - 1) {
+                    $(".searchCurrency").append("<div class = 'searchCurrencyList' id = 'searchCurrencyList" + (i + 1).toString() + "'>" + supportedCurrenciesTemp[i] + "</div>");
+                } else {
+                    $(".searchCurrency").append("<div class = 'searchCurrencyList' id = 'searchCurrencyList-1'>" + supportedCurrenciesTemp[i] + "</div>");
+                };
+            };
+            searchCurrency1Click();
+            mainCode();
+        };
+    });
+};
+
+$(document).ready(function() {
+    mainCode();
 });
