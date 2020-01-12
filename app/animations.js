@@ -27,12 +27,12 @@ function getSearch() {
     currentTrend = 2; // 0 for down, 1 for neutral, 2 for up
     // End of to-change
     // vars of list. Part 1 is any inititals matching. Part 2 is if the key is cointained in any part of the string. Part 2 shows after Part 1.
-    var availableStocksList = []
-    var availableStocksListPart2 = []
-    var availableCurrencyList = []
-    var availableCurrencyListPart2 = []
-    var availableCryptocurrencyList = []
-    var availableCryptocurrencyListPart2 = []
+    var availableStocksList = [];
+    var availableStocksListPart2 = [];
+    var availableCurrencyList = [];
+    var availableCurrencyListPart2 = [];
+    var availableCryptocurrencyList = [];
+    var availableCryptocurrencyListPart2 = [];
     searchKey = $("#searchBar").val();
     // loops through all the 3 types and search for any matching keys
     for (var stockName in availableStocks) {
@@ -58,9 +58,9 @@ function getSearch() {
     };
     // combining the two lists
     availableStocksList = [...availableStocksList, ...availableStocksListPart2];
-    availableCurrencyList = [...availableCurrencyList, ...availableCurrencyListPart2]
-    availableCryptocurrencyList = [...availableCryptocurrencyList, ...availableCryptocurrencyListPart2]
-    return [availableStocksList, availableCurrencyList, availableCryptocurrencyList]
+    availableCurrencyList = [...availableCurrencyList, ...availableCurrencyListPart2];
+    availableCryptocurrencyList = [...availableCryptocurrencyList, ...availableCryptocurrencyListPart2];
+    return [availableStocksList, availableCurrencyList, availableCryptocurrencyList];
 };  
 
 function switchContent(clickedID) {
@@ -257,8 +257,8 @@ var searchContent = 0; // 0 for stocks, 1 for currency, 2 for crypto
 var previousSearch = ""; // to disable refresh if there is no change
 var searchBarFocused = false;
 var currencyChangeClicked = 0;
-var supportedCurrencies = ["USD", "SGD", "EUR", "JPY", "CNY", "GBP", "CAD", "INR", "BTC", "ETH"]
-var currentCurrency = "USD"
+var supportedCurrencies = ["USD", "SGD", "EUR", "JPY", "CNY", "GBP", "CAD", "INR", "BTC", "ETH"];
+var currentCurrency = "USD";
 
 function mainCode() {
     $("#stocks").animate({
