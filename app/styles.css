@@ -28,6 +28,7 @@ body {
     position: absolute;
     margin-left: calc(var(--searchBarHorizontalOffset) - 0.5 * var(--searchBarWidthsize));
     margin-top: calc(var(--searchBarVerticalOffset) - 0.5 * var(--searchBarHeightsize));
+    z-index: 2;
 }
 
 #searchBar {
@@ -61,7 +62,7 @@ body {
     position: absolute;
     margin-left: calc(var(--searchBarHorizontalOffset) - 0.475 * var(--searchBarWidthsize));
     margin-top: calc(var(--searchBarVerticalOffset) + 0.5 * var(--searchBarHeightsize));  
-    z-index: -1;
+    z-index: -2;
     opacity: 0;
 }
 
@@ -80,7 +81,7 @@ body {
     width: 0px;
 }
 
-/* Labels */
+/* Labels & Dropdown */
 .labels {
     display: flex;
     position: absolute;
@@ -144,8 +145,69 @@ body {
     padding-left: calc(var(--searchBarWidthsize) / 2 - 125px);
 }
 
+/* Asset Overlay */
+#assetOverlayFilter {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    margin: -8px;
+    margin-top: calc(-8px - 100vh);
+    z-index: 0;
+}
+
+#assetOverlay {
+    position: absolute;
+    width: calc(20vw + 1000px);
+    height: calc(20vh + 600px);
+    background-color: var(--backgroundColour);
+    border-radius: 25px;
+    margin-left: calc(40vw - 500px);
+    /* margin-top: calc(40vh - 300px); */
+    margin-top: calc(-100vh);
+    z-index: 2;
+}
+
+#backButton {
+    cursor: pointer;
+    position: absolute;
+    margin-top: 16px;
+    margin-left: 16px;
+    border-radius: 50%;
+    background-color: transparent;
+    transition: 0.3s;
+}
+
+#backButton:hover {
+    transition: 0.3s;
+    background-color: #222222;
+}
+
+#assetOverlayAssetName {
+    color: var(--colourGhostWhite);
+    position: absolute;
+    margin-left: 75px;
+    margin-top: 16px;
+    font-size: 22px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+}
+
+#assetOverlayAssetPrice {
+    color: var(--colourGhostWhite);
+    margin-top: 16px;
+    font-size: 22px;
+    font-family: 'Open Sans', sans-serif;
+    text-align: right;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+/* Currency */
 .searchCurrency {
     padding-top: 15px;
+    position: absolute;
+    z-index: 1;
 }
 
 #searchCurrency {

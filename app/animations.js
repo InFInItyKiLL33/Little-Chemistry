@@ -182,6 +182,9 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                         backgroundColor: "transparent"
                     }, 100);
                 });
+                $("#dropdownElementMaster").click(function() {
+                    showAssetOverlay($(this).find("#itemShortName").html(), $(this).find("#itemLongName").html());
+                })
             }, 75);
         } else {
             // $("#searchIcon").show();
@@ -252,6 +255,33 @@ function searchCurrency1Click() {
     };
 };
 
+function hideAssetOverlay() {
+    $("#assetOverlayFilter").animate({
+        marginTop: (-8 - $(window).height()).toString() + "px"
+    }, 400);
+    $("#searchBarDiv").animate({
+        zIndex: 2
+    }, 400);
+    $("#assetOverlay").animate({
+        marginTop: ($(window).height() * -1).toString() + "px"
+    }, 400);
+    assetOverlayEnabled = 0;
+};
+
+function showAssetOverlay(shortAssetName, longAssetName) {
+    $("#assetOverlayFilter").animate({
+        marginTop: "-8px"
+    }, 400);
+    $("#searchBarDiv").animate({
+        zIndex: -2
+    }, 0);
+    $("#assetOverlay").animate({
+        marginTop: ($(window).height() * 0.4 - 300).toString() + "px"
+    }, 400);
+    assetOverlayEnabled = 1;
+    $("#assetOverlayAssetName").html(shortAssetName + " | " + longAssetName);
+};
+
 // Global Variables
 var searchContent = 0; // 0 for stocks, 1 for currency, 2 for crypto
 var previousSearch = ""; // to disable refresh if there is no change
@@ -259,6 +289,7 @@ var searchBarFocused = false;
 var currencyChangeClicked = 0;
 var supportedCurrencies = ["USD", "SGD", "EUR", "JPY", "CNY", "GBP", "CAD", "INR", "BTC", "ETH"];
 var currentCurrency = "USD";
+var assetOverlayEnabled = false;
 
 function mainCode() {
     $("#stocks").animate({
@@ -341,7 +372,7 @@ function mainCode() {
         };
     });
     $(".searchCurrencyList").click(function() {
-        if ($(this).attr("id") != "searchCurrencyList1") {
+        if ($(this).attr("id") != "searchCurrencyList1" && currencyChangeClicked == 1) {
             var clickedCurrency = $(this).html();
             var supportedCurrenciesTemp = [clickedCurrency];
             for (var itemIndex = 0; itemIndex < supportedCurrencies.length; itemIndex++) {
@@ -359,7 +390,12 @@ function mainCode() {
             };
             searchCurrency1Click();
             mainCode();
+        } else if (assetOverlayEnabled == 1) {
+            hideAssetOverlay();
         };
+    });
+    $("#assetOverlayFilter, #backButton").click(function() {
+        hideAssetOverlay();
     });
 };
 
