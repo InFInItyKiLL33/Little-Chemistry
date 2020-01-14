@@ -203,6 +203,30 @@ body {
     margin-right: 20px;
 }
 
+#assetOverlayRange {
+    display: flex;
+    color: var(--colourGhostWhite);
+}
+
+.assetOverlayRangeOptions {
+    width: auto;
+    text-align: center;
+    cursor: pointer;
+    background-color: transparent;
+    transition: 0.2s;
+    border-radius: 10px;
+    padding-right: 65px;
+}
+
+.assetOverlayRangeOptions:hover {
+    color: var(--searchBarHighlightColour);
+    transition: 0.2s;
+}
+
+#assetOverlayRangeOptions1 {
+    margin-left: calc(50vw - 400px);
+}
+
 /* Currency */
 .searchCurrency {
     padding-top: 15px;
