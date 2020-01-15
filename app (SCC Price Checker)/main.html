@@ -1,7 +1,9 @@
 <html>
     <head>
         <title>Stock Prices</title>
+        <link rel = "stylesheet" href = "https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
         <link rel = "stylesheet" href = "styles.css">
+        <script src = "https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <link href = "https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel = "stylesheet">
@@ -47,11 +49,52 @@
             <div id = "assetOverlayAssetPrice">$339.81</div>
             <div id = "assetOverlayRange">
                 <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions1">HOUR</div>
-                <div class = "assetOverlayRangeOptions">DAY</div>
-                <div class = "assetOverlayRangeOptions">WEEK</div>
-                <div class = "assetOverlayRangeOptions">MONTH</div>
-                <div class = "assetOverlayRangeOptions">YEAR</div>
-                <div class = "assetOverlayRangeOptions">ALL</div>
+                <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions2">DAY</div>
+                <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions3">WEEK</div>
+                <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions4">MONTH</div>
+                <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions5">YEAR</div>
+                <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions6">ALL</div>
+            </div>
+            <div class = "ct-chart ct-minor-seventh" id = "assetOverlayGraph">
+                <svg width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <style type="text/css">
+                      rect{fill:url(#MyGradient1)}
+                    </style>
+                    <defs>
+                      <linearGradient id="MyGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="60%" stop-color="#01BAEF" />
+                        <stop offset="100%" stop-color="#121212" />
+                      </linearGradient>
+                    </defs>
+                    
+                    <rect width="100" height="50"/>
+                </svg>
+                <svg width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <style type="text/css">
+                      rect{fill:url(#MyGradient2)}
+                    </style>
+                    <defs>
+                      <linearGradient id="MyGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="60%" stop-color="#20BF55" />
+                        <stop offset="100%" stop-color="#121212" />
+                      </linearGradient>
+                    </defs>
+                    
+                    <rect width="100" height="50"/>
+                </svg>
+                <svg width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <style type="text/css">
+                      rect{fill:url(#MyGradient3)}
+                    </style>
+                    <defs>
+                      <linearGradient id="MyGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="60%" stop-color="#eaee00" />
+                        <stop offset="100%" stop-color="#121212" />
+                      </linearGradient>
+                    </defs>
+                    
+                    <rect width="100" height="50"/>
+                </svg>
             </div>
         </div>
     </body>

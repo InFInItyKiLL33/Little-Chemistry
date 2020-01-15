@@ -18,10 +18,7 @@ function getSearch() {
     };
     availableCryptocurrency = {
         "Bitcoin": "BTC",
-        "Bitcoin Cash": "BCH",
-        "Ethereum": "ETH",
-        "Ripple": "XRP",
-        "Litecoin": "LTC"
+        "Ethereum": "ETH"
     };
     currentPrice = 987.65;
     currentTrend = 2; // 0 for down, 1 for neutral, 2 for up
@@ -171,7 +168,7 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                 $(".dropdownElementIcon").animate({
                     "backgroundColor": iconColours[clickedID]
                 }, 0);
-            }, 75);
+            }, 150);
             setTimeout(function() {
                 $(".dropdownElementMaster").hover(function() {
                     $(this).stop().animate({
@@ -182,10 +179,35 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                         backgroundColor: "transparent"
                     }, 100);
                 });
-                $("#dropdownElementMaster").click(function() {
+                $(".dropdownElementMaster").click(function() {
                     showAssetOverlay($(this).find("#itemShortName").html(), $(this).find("#itemLongName").html());
+                    assetOverlayEnabled = 1;
+                    setTimeout(function() {
+                        if (searchContent == 1) {
+                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                stroke: "#20BF55"
+                            });
+                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                fill: "url(#MyGradient2)"
+                            });
+                        } else if (searchContent == 2) {
+                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                stroke: "#eaee00"
+                            });
+                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                fill: "url(#MyGradient3)"
+                            });
+                        } else {
+                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                stroke: "#01BAEF"
+                            });
+                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                fill: "url(#MyGradient1)"
+                            });
+                        };
+                    }, 150)
                 })
-            }, 75);
+            }, 150);
         } else {
             // $("#searchIcon").show();
             $("#searchBar").animate({ // collapse animation
@@ -257,7 +279,7 @@ function searchCurrency1Click() {
 
 function hideAssetOverlay() {
     $("#assetOverlayFilter").animate({
-        marginTop: (-8 - $(window).height()).toString() + "px"
+        marginTop: (-8 - ($(window).height() * 3)).toString() + "px"
     }, 400);
     $("#searchBarDiv").animate({
         zIndex: 2
@@ -280,6 +302,31 @@ function showAssetOverlay(shortAssetName, longAssetName) {
     }, 400);
     assetOverlayEnabled = 1;
     $("#assetOverlayAssetName").html(shortAssetName + " | " + longAssetName);
+    // Replace following lines of code when real data is available
+    chartData = {
+        labels: [],
+        series: [[100.00, 100.01, 100.04, 100.02, 99.92, 99.94, 99.99, 100.10, 100.12, 100.30, 100.49, 100.80]]
+    };
+    // End of replacement
+    chartDataOptions = {
+        width: $(window).width() * 0.2 + 960,
+        height: $(window).height() * 0.55,
+        showPoint: false,   
+        axisY: {showLabel: false, showGrid: false},
+        showArea: true,
+        chartPadding: {
+            top: $(window).height() * 0.1,
+            right: 0,
+            bottom: 0,
+            left: $(window).width() * 0.05
+        },
+    };
+    assetChart = new Chartist.Line(".ct-chart", chartData, chartDataOptions);
+    setTimeout(function() {
+        $(".ct-chart-line").css({
+            width: "calc(20vw + 1000px)"
+        });
+    }, 150)
 };
 
 // Global Variables
@@ -290,11 +337,25 @@ var currencyChangeClicked = 0;
 var supportedCurrencies = ["USD", "SGD", "EUR", "JPY", "CNY", "GBP", "CAD", "INR", "BTC", "ETH"];
 var currentCurrency = "USD";
 var assetOverlayEnabled = false;
+var assetOverlayRange = 2;
+var assetOverlayRangeOptions = {
+    "HOUR": 1, 
+    "DAY": 2, 
+    "WEEK": 3, 
+    "MONTH": 4, 
+    "YEAR": 5, 
+    "ALL": 6
+};
+var assetChart;
+var chartData;
+var chartDataOptions;
 
 function mainCode() {
-    $("#stocks").animate({
-        color: "#FBFBFF"
-    }, 0);
+    if (searchContent == 0) {
+        $("#stocks").animate({
+            color: "#FBFBFF"
+        }, 0);
+    };  
     // event handler for typing
     $("#searchBar").keyup(function() {
         searchBarSearch(searchContent, 0);
@@ -390,12 +451,66 @@ function mainCode() {
             };
             searchCurrency1Click();
             mainCode();
-        } else if (assetOverlayEnabled == 1) {
+        } else if ($(this).attr("id") != "searchCurrencyList1" && assetOverlayEnabled == 1) {
             hideAssetOverlay();
+            assetOverlayEnabled = 0;
         };
     });
     $("#assetOverlayFilter, #backButton").click(function() {
         hideAssetOverlay();
+    });
+    $(".assetOverlayRangeOptions").click(function() {
+        if (assetOverlayRangeOptions[$(this).html()] != assetOverlayRange) {
+            $("#assetOverlayRangeOptions" + assetOverlayRange).css({
+                fontWeight: "normal",
+                color: "#B4B4B4"
+            });
+            assetOverlayRange = assetOverlayRangeOptions[$(this).html()];
+            $(this).css({
+                fontWeight: "bold",
+                color: "#FBFBFF"
+            });
+        };
+    });
+    $(window).resize(function() {
+        setTimeout(function() {
+            chartDataOptions = {
+                width: $(window).width() * 0.2 + 960,
+                height: $(window).height() * 0.55,
+                showPoint: false,   
+                axisY: {showLabel: false, showGrid: false},
+                showArea: true,
+                chartPadding: {
+                    top: $(window).height() * 0.1,
+                    right: 0,
+                    bottom: 0,
+                    left: $(window).width() * 0.05
+                },
+            };
+            assetChart.update(chartData, chartDataOptions);
+            if (searchContent == 1) {
+                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                    stroke: "#20BF55"
+                });
+                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                    fill: "url(#MyGradient2)"
+                });
+            } else if (searchContent == 2) {
+                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                    stroke: "#eaee00"
+                });
+                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                    fill: "url(#MyGradient3)"
+                });
+            } else {
+                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                    stroke: "#01BAEF"
+                });
+                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                    fill: "url(#MyGradient1)"
+                });
+            };
+        }, 0);
     });
 };
 

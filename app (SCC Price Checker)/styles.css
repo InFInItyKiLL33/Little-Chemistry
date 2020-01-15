@@ -148,11 +148,11 @@ body {
 /* Asset Overlay */
 #assetOverlayFilter {
     position: absolute;
-    width: 100vw;
-    height: 100vh;
+    width: 200vw;
+    height: 200vh;
     background-color: rgba(0, 0, 0, 0.4);
     margin: -8px;
-    margin-top: calc(-8px - 100vh);
+    margin-top: calc(-8px - 200vh);
     z-index: 0;
 }
 
@@ -206,25 +206,53 @@ body {
 #assetOverlayRange {
     display: flex;
     color: var(--colourGhostWhite);
+    position: absolute;
+    margin-top: calc(10vh + 450px);
+    z-index: 2;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .assetOverlayRangeOptions {
     width: auto;
-    text-align: center;
     cursor: pointer;
     background-color: transparent;
     transition: 0.2s;
     border-radius: 10px;
-    padding-right: 65px;
+    padding-right: 30px;
+    color: var(--searchBarHighlightColour);
 }
 
+#assetOverlayRangeOptions2 {
+    color: var(--colourGhostWhite);
+    font-weight: bold;
+};
+
 .assetOverlayRangeOptions:hover {
-    color: var(--searchBarHighlightColour);
+    color: var(--colourGhostWhite);
     transition: 0.2s;
 }
 
 #assetOverlayRangeOptions1 {
-    margin-left: calc(50vw - 400px);
+    margin-left: 140px;
+}
+
+.ct-grids line {
+    color: var(--colourGhostWhite);
+    stroke: transparent;
+}
+/* .ct-labels span {
+    color: transparent;
+} */
+
+.ct-series-a .ct-line, .ct-series-a .ct-point {
+    /* Set the colour of this series line */
+    stroke: var(--colourCyan);
+    /* Control the thikness of your lines */
+    stroke-width: 2px;
+}
+
+.ct-series-a .ct-area, .ct-series-b .ct-area {
+    fill: url(#MyGradient1);
 }
 
 /* Currency */
