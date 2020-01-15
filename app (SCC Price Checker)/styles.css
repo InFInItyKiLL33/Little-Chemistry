@@ -6,7 +6,7 @@
     --colourCyan: #01BAEF;
     --colourGhostWhite: #FBFBFF;
     --colourSonicSilver: #757575;
-    --backgroundColour: #121212;
+    --backgroundColour: #181818;
     --searchBarHighlightColour: rgb(180, 180, 180);
     --unselectedLabelsColour: rgb(120, 120, 120);
     --searchBarVerticalOffset: 30vh;
@@ -181,7 +181,7 @@ body {
 
 #backButton:hover {
     transition: 0.3s;
-    background-color: #222222;
+    background-color: #242424;
 }
 
 #assetOverlayAssetName {
