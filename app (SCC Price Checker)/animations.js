@@ -310,7 +310,7 @@ function showAssetOverlay(shortAssetName, longAssetName) {
     // End of replacement
     chartDataOptions = {
         width: $(window).width() * 0.2 + 960,
-        height: $(window).height() * 0.55,
+        height: $(window).height() * 0.2 + 300,
         showPoint: false,   
         axisY: {showLabel: false, showGrid: false},
         showArea: true,
@@ -476,7 +476,7 @@ function mainCode() {
         setTimeout(function() {
             chartDataOptions = {
                 width: $(window).width() * 0.2 + 960,
-                height: $(window).height() * 0.55,
+                height: $(window).height() * 0.2 + 300,
                 showPoint: false,   
                 axisY: {showLabel: false, showGrid: false},
                 showArea: true,

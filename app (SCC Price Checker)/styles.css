@@ -20,6 +20,7 @@
 body {
     background-color: var(--backgroundColour);
     font-family: var(--mainFont);
+    overflow: hidden;
 }
 
 /* Search Bar */
@@ -207,7 +208,7 @@ body {
     display: flex;
     color: var(--colourGhostWhite);
     position: absolute;
-    margin-top: calc(10vh + 450px);
+    margin-top: calc(20vh + 350px);
     z-index: 2;
     font-family: 'Open Sans', sans-serif;
 }
