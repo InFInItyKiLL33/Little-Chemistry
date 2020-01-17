@@ -156,12 +156,14 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                             }, 0);
                         };
                     };
+                    noResults = 0
                 } else {
                     $(".dropdownAppender").append(
                         "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
                         + "<div class = 'dropdownElement' id = 'noResultsFoundText'>No Results Found</div>"
                         + "</div>"
                     );
+                    noResults = 1
                 };
             }, 75);
             setTimeout(function() {
@@ -170,43 +172,57 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                 }, 0);
             }, 150);
             setTimeout(function() {
-                $(".dropdownElementMaster").hover(function() {
-                    $(this).stop().animate({
-                        backgroundColor: "rgba(34, 34, 34, 1)"
-                    }, 100);
-                }, function() {
-                    $(this).stop().animate({
-                        backgroundColor: "transparent"
-                    }, 100);
-                });
-                $(".dropdownElementMaster").click(function() {
-                    showAssetOverlay($(this).find("#itemShortName").html(), $(this).find("#itemLongName").html());
-                    assetOverlayEnabled = 1;
-                    setTimeout(function() {
-                        if (searchContent == 1) {
-                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
-                                stroke: "#20BF55"
+                if (noResults == 0) {
+                    $(".dropdownElementMaster").hover(function() {
+                        $(this).stop().animate({
+                            backgroundColor: "rgba(34, 34, 34, 1)"
+                        }, 100);
+                    }, function() {
+                        $(this).stop().animate({
+                            backgroundColor: "transparent"
+                        }, 100);
+                    });
+                    $(".dropdownElementMaster").css({
+                        "cursor": "hand"
+                    });
+                    $(".dropdownElementMaster").click(function() {
+                        showAssetOverlay($(this).find("#itemShortName").html(), $(this).find("#itemLongName").html());
+                        assetOverlayEnabled = 1;
+                        setTimeout(function() {
+                            if (searchContent == 1) {
+                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                    stroke: "#20BF55"
+                                });
+                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                    fill: "url(#MyGradient2)"
+                                });
+                            } else if (searchContent == 2) {
+                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                    stroke: "#eaee00"
+                                });
+                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                    fill: "url(#MyGradient3)"
+                                });
+                            } else {
+                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                    stroke: "#01BAEF"
+                                });
+                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                    fill: "url(#MyGradient1)"
+                                });
+                            };
+                            $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
+                            $("#assetOverlayAssetPrice").html(currentCurrency + chartValues[chartValues.length - 1]);
+                            $("#assetOverlayRangeCalculatorLabel").css({
+                                color: iconColours[clickedID]
                             });
-                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
-                                fill: "url(#MyGradient2)"
-                            });
-                        } else if (searchContent == 2) {
-                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
-                                stroke: "#eaee00"
-                            });
-                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
-                                fill: "url(#MyGradient3)"
-                            });
-                        } else {
-                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
-                                stroke: "#01BAEF"
-                            });
-                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
-                                fill: "url(#MyGradient1)"
-                            });
-                        };
-                    }, 150)
-                })
+                        }, 150)
+                    })
+                } else {
+                    $(".dropdownElementMaster").css({
+                        "cursor": "default"
+                    });
+                };
             }, 150);
         } else {
             // $("#searchIcon").show();
@@ -313,8 +329,8 @@ function showAssetOverlay(shortAssetName, longAssetName) {
     };
     // End of replacement
     chartDataOptions = {
-        width: $(window).width() * 0.2 + 960,
-        height: $(window).height() * 0.2 + 300,
+        width: $(window).width() * 0.2 + 900,
+        height: $(window).height() * 0.4 + 100,
         showPoint: false,   
         axisY: {showLabel: false, showGrid: false},
         showArea: true,
@@ -338,11 +354,12 @@ function showAssetOverlay(shortAssetName, longAssetName) {
 var searchContent = 0; // 0 for stocks, 1 for currency, 2 for crypto
 var previousSearch = ""; // to disable refresh if there is no change
 var searchBarFocused = false;
-var currencyChangeClicked = 0;
+var currencyChangeClicked = 0; // index of supportedCurrencies
 var supportedCurrencies = ["USD", "SGD", "EUR", "JPY", "CNY", "GBP", "CAD", "INR", "BTC", "ETH"];
 var currentCurrency = "USD";
 var assetOverlayEnabled = false;
-var assetOverlayRange = 2;
+var assetOverlayRange = 2; // default as DAY
+var assetOverlayRangeCalculator = 2; // default as COST
 var assetOverlayRangeOptions = {
     "HOUR": 1, 
     "DAY": 2, 
@@ -455,6 +472,8 @@ function mainCode() {
                 };
             };
             searchCurrency1Click();
+            currentCurrency = supportedCurrenciesTemp[0];
+            $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
             mainCode();
         } else if ($(this).attr("id") != "searchCurrencyList1" && assetOverlayEnabled == 1) {
             hideAssetOverlay();
@@ -477,11 +496,26 @@ function mainCode() {
             });
         };
     });
+    $("#assetOverlayRangeCalculatorOptions1, #assetOverlayRangeCalculatorOptions2").click(function() {
+        $("#assetOverlayRangeCalculatorOptions" + assetOverlayRangeCalculator).css({
+            fontWeight: "normal",
+            color: "#B4B4B4"
+        });
+        if (assetOverlayRangeCalculator == 2) {
+            assetOverlayRangeCalculator--;
+        } else {
+            assetOverlayRangeCalculator++;
+        };
+        $("#assetOverlayRangeCalculatorOptions" + assetOverlayRangeCalculator).css({
+            fontWeight: "bold",
+            color: "#FBFBFF"
+        });
+    })
     $(window).resize(function() {
         setTimeout(function() {
             chartDataOptions = {
-                width: $(window).width() * 0.2 + 960,
-                height: $(window).height() * 0.2 + 300,
+                width: $(window).width() * 0.2 + 900,
+                height: $(window).height() * 0.4 + 100,
                 showPoint: false,   
                 axisY: {showLabel: false, showGrid: false},
                 showArea: true,
@@ -518,15 +552,22 @@ function mainCode() {
             mouseMove();
         }, 0);
     });
+    $("#assetOverlayCostQuantity").keyup(function() {
+        if (isNaN($("#assetOverlayCostQuantity").val()) == false && $("#assetOverlayCostQuantity").val().length > 0) {
+            $("#assetOverlayCostQuantityLabel3").html("Total Cost - " + currentCurrency + parseFloat($("#assetOverlayCostQuantity").val()) * chartValues[chartValues.length - 1]);
+        } else {
+            $("#assetOverlayCostQuantityLabel3").html("");
+        };
+    });
 };
 
 function mouseMove() {
     $(window).mousemove(function() {
         if (assetOverlayEnabled) {
             var xCoords = event.pageX - (0.4 * $(window).width() - 492);
-            var yCoords = event.pageY - 54.4 + parseFloat($("#assetOverlay").css("marginTop").substring(0, $("#assetOverlay").css("marginTop").length - 2))
+            var yCoords = event.pageY;
             if ($("svg").find("line")[0]["x1"]["baseVal"]["value"] <= xCoords && $("svg").find("line")[$("svg").find("line").length - 1]["x1"]["baseVal"]["value"] >= xCoords) {
-                if ($("svg").find("line")[0]["y1"]["baseVal"]["value"] <= yCoords && $("svg").find("line")[0]["y2"]["baseVal"]["value"] >= yCoords) {
+                if ($("svg").find("line").offset().top <= yCoords && $("svg").find("line")[0]["y2"]["baseVal"]["value"] - $("svg").find("line")[0]["y1"]["baseVal"]["value"] + $("svg").find("line").offset().top >= yCoords) {
                     var dictOfLines = $("svg").find("line");
                     var lineX;
                     var closestIndex = 0

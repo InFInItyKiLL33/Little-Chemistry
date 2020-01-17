@@ -6,9 +6,7 @@
         <script src = "https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-        <link href = "https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel = "stylesheet">
-        <link href = "https://fonts.googleapis.com/css?family=Roboto&display=swap" rel = "stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC|Roboto|Open+Sans|Montserrat:300|Raleway|Source+Sans+Pro:300&display=swap" rel="stylesheet">
         <script src = "animations.js"></script>
     </head>
     <body>
@@ -46,8 +44,11 @@
         <div id = "assetOverlay">
             <img src = "backbutton.png" id = "backButton">
             <div id = "assetOverlayAssetName"></div>
-            <div id = "assetOverlayAssetPrice">$339.81</div>
+            <div id = "assetOverlayAssetPrice">Retrieving Price...</div>
             <div id = "assetOverlayRange">
+                <div class = "assetOverlayRangeOptionsCalc" id = "assetOverlayRangeCalculatorLabel">CALCULATORS</div>
+                <div class = "assetOverlayRangeOptionsCalc" id = "assetOverlayRangeCalculatorOptions1">PROFIT</div>
+                <div class = "assetOverlayRangeOptionsCalc" id = "assetOverlayRangeCalculatorOptions2">COST</div>
                 <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions1">HOUR</div>
                 <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions2">DAY</div>
                 <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions3">WEEK</div>
@@ -55,6 +56,15 @@
                 <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions5">YEAR</div>
                 <div class = "assetOverlayRangeOptions" id = "assetOverlayRangeOptions6">ALL</div>
             </div>
+            <div id = "assetOverlayRangeCalculatorDivider"></div>
+            <div class = "assetOverlayCost">
+                <div class = "assetOverlayCostQuantityLabel" id = "assetOverlayCostQuantityLabel1">Quantity</div>
+                <input id = "assetOverlayCostQuantity" type = "text" spellcheck = "false" autocomplete = "off" autocorrect = "off">
+                <div class = "assetOverlayCostQuantityLabel" id = "assetOverlayCostQuantityLabel2">Current Price</div>
+                <input id = "assetOverlayCostPrice" type = "text" spellcheck = "false" autocomplete = "off" autocorrect = "off" disabled>
+                <div class = "assetOverlayCostQuantityLabel" id = "assetOverlayCostQuantityLabel3"></div>
+            </div>
+            <!-- Charts -->
             <div id = "chartHighlighter"></div>
             <div id = "chartHighlighterPrice"></div>
             <div class = "ct-chart ct-minor-seventh" id = "assetOverlayGraph">

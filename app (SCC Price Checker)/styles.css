@@ -160,7 +160,7 @@ body {
 #assetOverlay {
     position: absolute;
     width: calc(20vw + 1000px);
-    height: calc(20vh + 600px);
+    height: calc(40vh + 400px);
     background-color: var(--backgroundColour);
     border-radius: 25px;
     margin-left: calc(40vw - 500px);
@@ -172,11 +172,12 @@ body {
 #backButton {
     cursor: pointer;
     position: absolute;
-    margin-top: 16px;
-    margin-left: 16px;
+    margin-top: 24px;
+    margin-left: 24px;
     border-radius: 50%;
     background-color: transparent;
     transition: 0.3s;
+    z-index: 5;
 }
 
 #backButton:hover {
@@ -187,8 +188,8 @@ body {
 #assetOverlayAssetName {
     color: var(--colourGhostWhite);
     position: absolute;
-    margin-left: 75px;
-    margin-top: 16px;
+    margin-left: 91px;
+    margin-top: 24px;
     font-size: 22px;
     font-family: 'Open Sans', sans-serif;
     font-weight: bold;
@@ -196,24 +197,25 @@ body {
 
 #assetOverlayAssetPrice {
     color: var(--colourGhostWhite);
-    margin-top: 16px;
+    margin-top: 24px;
     font-size: 22px;
     font-family: 'Open Sans', sans-serif;
     text-align: right;
     font-weight: bold;
-    margin-right: 20px;
+    margin-left: calc(20vw + 886px);
+    position: absolute;
 }
 
 #assetOverlayRange {
     display: flex;
     color: var(--colourGhostWhite);
     position: absolute;
-    margin-top: calc(20vh + 350px);
+    margin-top: calc(40vh + 140px);
     z-index: 2;
     font-family: 'Open Sans', sans-serif;
 }
 
-.assetOverlayRangeOptions {
+.assetOverlayRangeOptions, .assetOverlayRangeOptionsCalc {
     width: auto;
     cursor: pointer;
     background-color: transparent;
@@ -228,22 +230,31 @@ body {
     font-weight: bold;
 };
 
-.assetOverlayRangeOptions:hover {
+.assetOverlayRangeOptions:hover, .assetOverlayRangeOptionsCalc:hover {
     color: var(--colourGhostWhite);
     transition: 0.2s;
 }
 
 #assetOverlayRangeOptions1 {
-    margin-left: 140px;
+    margin-left: calc(20vw + 90px);
+}
+
+#assetOverlayRangeCalculatorLabel {
+    margin-left: 120px;
+    color: var(--colourCyan);
+    font-weight: bold;
+    cursor: default;
+}
+
+#assetOverlayRangeCalculatorOptions2 {
+    font-weight: bold;
+    color: var(--colourGhostWhite);
 }
 
 .ct-grids line {
     color: var(--colourGhostWhite);
     stroke: transparent;
 }
-/* .ct-labels span {
-    color: transparent;
-} */
 
 .ct-series-a .ct-line, .ct-series-a .ct-point {
     /* Set the colour of this series line */
@@ -272,6 +283,74 @@ body {
     position: absolute;
     font-family: 'Open Sans', sans-serif;
     font-weight: bold;
+}
+
+#assetOverlayRangeCalculatorDivider {
+    width: calc(20vw + 815px);
+    margin-left: 100px;
+    height: 1px;
+    background-color: var(--colourSonicSilver);
+    position: absolute;
+    margin-top: calc(40vh + 110px);
+}
+
+#assetOverlayCostQuantity, #assetOverlayCostPrice {
+    width: 75px;
+    height: 45px;
+    background-color: transparent;
+    border: 1px solid var(--unselectedLabelsColour);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0px;
+    color: var(--colourGhostWhite);
+    outline: none;
+    font-size: 16px;
+    padding: 8px 10px 0px 10px;
+    transition: 0.2s;
+    font-family: 'Montserrat', sans-serif;
+}   
+
+#assetOverlayCostQuantity:hover, #assetOverlayCostQuantity:focus {
+    border: 1px solid var(--colourGhostWhite);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0px;
+    transition: 0.2s;
+}
+
+.assetOverlayCostQuantityLabel {
+    position: absolute;
+    color: var(--colourGhostWhite);
+    margin-left: 5px;
+    margin-top: -10px;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    background-color: var(--backgroundColour);
+}
+
+#assetOverlayCostQuantityLabel2 {
+    margin-top: -55px;
+    margin-left: 120px;
+    width: 100px;
+}
+
+#assetOverlayCostQuantityLabel3 {
+    margin-top: 25px;
+}
+
+#assetOverlayCostPrice {
+    margin-left: 40px;
+    width: 100px;
+}
+
+.assetOverlayCost {
+    margin-top: calc(40vh + 200px);
+    position: absolute;
+    margin-left: 140px;
+    z-index: 5;
 }
 
 /* Currency */
