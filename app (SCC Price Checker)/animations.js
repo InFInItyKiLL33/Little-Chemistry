@@ -93,7 +93,7 @@ function unhoverContent(hoverID) {
 };
 
 function searchBarSearch(clickedID, type) { // type is just used to bypass same search check
-    var iconColours = ["#01BAEF", "#20BF55", "#eaee00"];
+    iconColours = ["#01BAEF", "#20BF55", "#eaee00"];
     if ($("#searchBar").val() != previousSearch || type == 1) { // checking for if the search is the same (e.g. pressing control button)
         setTimeout(function() {
             $(".dropdownElementMaster").remove();
@@ -302,10 +302,14 @@ function showAssetOverlay(shortAssetName, longAssetName) {
     }, 400);
     assetOverlayEnabled = 1;
     $("#assetOverlayAssetName").html(shortAssetName + " | " + longAssetName);
+    chartValues = []
+    for (var index = 0; index < 200; index++) {
+        chartValues.push(Math.round(Math.random() * Math.random() * Math.random() * 1 * 100) / 100);
+    };
     // Replace following lines of code when real data is available
     chartData = {
         labels: [],
-        series: [[100.00, 100.01, 100.04, 100.02, 99.92, 99.94, 99.99, 100.10, 100.12, 100.30, 100.49, 100.80]]
+        series: [chartValues]
     };
     // End of replacement
     chartDataOptions = {
@@ -326,6 +330,7 @@ function showAssetOverlay(shortAssetName, longAssetName) {
         $(".ct-chart-line").css({
             width: "calc(20vw + 1000px)"
         });
+        mouseMove();
     }, 150)
 };
 
@@ -510,7 +515,43 @@ function mainCode() {
                     fill: "url(#MyGradient1)"
                 });
             };
+            mouseMove();
         }, 0);
+    });
+};
+
+function mouseMove() {
+    $(window).mousemove(function() {
+        if (assetOverlayEnabled) {
+            var xCoords = event.pageX - (0.4 * $(window).width() - 500);
+            var yCoords = event.pageY - 56;
+            if ($("svg").find("line")[0]["x1"]["baseVal"]["value"] <= xCoords && $("svg").find("line")[$("svg").find("line").length - 1]["x1"]["baseVal"]["value"] >= xCoords) {
+                if ($("svg").find("line")[0]["y1"]["baseVal"]["value"] <= yCoords && $("svg").find("line")[0]["y2"]["baseVal"]["value"] >= yCoords) {
+                    var dictOfLines = $("svg").find("line");
+                    var lineX;
+                    var closestIndex = 0
+                    var maxDiff = (dictOfLines[1]["x1"]["baseVal"]["value"] - dictOfLines[0]["x1"]["baseVal"]["value"]) / 2
+                    for (var i = 0; i < dictOfLines.length; i++) {
+                        lineX = dictOfLines[i]["x1"]["baseVal"]["value"];
+                        if (lineX + maxDiff > xCoords && lineX - maxDiff < xCoords) {
+                            closestIndex = i;
+                            break
+                        };
+                    };
+                    $("#chartHighlighter").css({
+                        backgroundColor: iconColours[searchContent],
+                        marginLeft: lineX,
+                        opacity: 0.25
+                    });
+                    $("#chartHighlighterPrice").css({
+                        color: iconColours[searchContent],
+                        marginLeft: lineX - 37.5,
+                        marginTop: $("svg").find("line")[0]["y2"]["baseVal"]["value"]
+                    });
+                    $("#chartHighlighterPrice").html("$" + chartValues[closestIndex]);
+                };
+            };
+        };
     });
 };
 

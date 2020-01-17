@@ -256,6 +256,24 @@ body {
     fill: url(#MyGradient1);
 }
 
+#chartHighlighter {
+    height: 345px;
+    width: 2px;
+    background-color: transparent;
+    position: absolute;
+    margin-top: 75px;
+    border-radius: 2px;
+}
+
+#chartHighlighterPrice {
+    width: 75px;
+    text-align: center;
+    color: var(--colourCyan);
+    position: absolute;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+}
+
 /* Currency */
 .searchCurrency {
     padding-top: 15px;
