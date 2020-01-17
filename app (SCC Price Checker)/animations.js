@@ -523,8 +523,8 @@ function mainCode() {
 function mouseMove() {
     $(window).mousemove(function() {
         if (assetOverlayEnabled) {
-            var xCoords = event.pageX - (0.4 * $(window).width() - 500);
-            var yCoords = event.pageY - 56;
+            var xCoords = event.pageX - (0.4 * $(window).width() - 492);
+            var yCoords = event.pageY - 54.4 + parseFloat($("#assetOverlay").css("marginTop").substring(0, $("#assetOverlay").css("marginTop").length - 2))
             if ($("svg").find("line")[0]["x1"]["baseVal"]["value"] <= xCoords && $("svg").find("line")[$("svg").find("line").length - 1]["x1"]["baseVal"]["value"] >= xCoords) {
                 if ($("svg").find("line")[0]["y1"]["baseVal"]["value"] <= yCoords && $("svg").find("line")[0]["y2"]["baseVal"]["value"] >= yCoords) {
                     var dictOfLines = $("svg").find("line");
@@ -541,12 +541,14 @@ function mouseMove() {
                     $("#chartHighlighter").css({
                         backgroundColor: iconColours[searchContent],
                         marginLeft: lineX,
-                        opacity: 0.25
+                        opacity: 0.25,
+                        marginTop: $("svg").find("line")[0]["y1"]["baseVal"]["value"], 
+                        height: $("svg").find("line")[0]["y2"]["baseVal"]["value"] - $("svg").find("line")[0]["y1"]["baseVal"]["value"]
                     });
                     $("#chartHighlighterPrice").css({
                         color: iconColours[searchContent],
                         marginLeft: lineX - 37.5,
-                        marginTop: $("svg").find("line")[0]["y2"]["baseVal"]["value"]
+                        marginTop: $("svg").find("line")[0]["y2"]["baseVal"]["value"] + 10
                     });
                     $("#chartHighlighterPrice").html("$" + chartValues[closestIndex]);
                 };
