@@ -9,7 +9,7 @@
     --backgroundColour: #181818;
     --searchBarHighlightColour: rgb(180, 180, 180);
     --unselectedLabelsColour: rgb(120, 120, 120);
-    --searchBarVerticalOffset: 30vh;
+    --searchBarVerticalOffset: 20vh;
     --searchBarHorizontalOffset: 50vw;
 
     /* searchBar variables */
@@ -21,6 +21,13 @@ body {
     background-color: var(--backgroundColour);
     font-family: var(--mainFont);
     overflow: hidden;
+    background: var(--backgroundColour);
+    background-image: url("background.png");
+    background-image: url("background.png"), linear-gradient(#ffffff 15%, #000000 85%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-blend-mode: overlay;
+    background-position: center;
 }
 
 /* Search Bar */
