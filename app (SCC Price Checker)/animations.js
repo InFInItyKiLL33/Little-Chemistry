@@ -216,7 +216,9 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                             $("#assetOverlayRangeCalculatorLabel").css({
                                 color: iconColours[clickedID]
                             });
-                        }, 150)
+                            costCalculatorCalculate();
+                            profitCalculatorCalculate();
+                        }, 150);
                     })
                 } else {
                     $(".dropdownElementMaster").css({
@@ -348,6 +350,46 @@ function showAssetOverlay(shortAssetName, longAssetName) {
         });
         mouseMove();
     }, 150)
+};
+
+function costCalculatorCalculate() {
+    if (isNaN($("#assetOverlayCostQuantity").val()) == false && $("#assetOverlayCostQuantity").val().length > 0) {
+        $("#assetOverlayCostQuantityLabel3").html("Total Cost - " + currentCurrency + parseFloat($("#assetOverlayCostQuantity").val()) * chartValues[chartValues.length - 1]);
+    } else {
+        $("#assetOverlayCostQuantityLabel3").html("");
+    };
+};
+
+function profitCalculatorCalculate() {
+    if (isNaN($("#assetOverlayProfitQuantity").val()) == false && $("#assetOverlayProfitQuantity").val().length > 0 && isNaN($("#assetOverlayProfitCost").val()) == false && $("#assetOverlayProfitCost").val().length > 0 && $("#assetOverlayProfitCurrency").val().length == 3 && $("#assetOverlayProfitDate").val().length == 10 && $("#assetOverlayProfitDate").val().split("/").join("").length == 8 && supportedCurrencies.includes($("#assetOverlayProfitCurrency").val().toUpperCase())) {
+        if ($("#assetOverlayProfitCurrency").val() == "BTC" || $("#assetOverlayProfitCurrency").val() == "ETH") {
+            var currencyType = 1;
+        } else {
+            var currencyType = 0;
+        };
+        if (currentCurrency == $("#assetOverlayProfitCurrency").val().toUpperCase()) {
+            var valueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * chartValues[chartValues.length - 1]) - parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * $("#assetOverlayProfitCost").val())) * 100) / 100
+            var percentageChange = Math.round((valueChange / $("#assetOverlayProfitQuantity").val()) / chartValues[chartValues.length - 1] * 10000) / 100
+            if (valueChange > 0) {
+                $("#assetOverlayProfitQuantityLabel5").html("Profit +" + currentCurrency + valueChange + " (+" + percentageChange + "%)");
+                $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                    color: iconColours[1]
+                }, 100);
+            } else if (valueChange < 0) {
+                $("#assetOverlayProfitQuantityLabel5").html("Profit -" + currentCurrency + Math.abs(valueChange) + " (" + percentageChange + "%)");
+                $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                    color: "red"
+                }, 100);
+            } else {
+                $("#assetOverlayProfitQuantityLabel5").html("Profit " + currentCurrency + "0 (0%)");
+                $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                    color: "#757575"
+                }, 100);
+            };
+        };
+    } else {
+        $("#assetOverlayProfitQuantityLabel5").html("");
+    };
 };
 
 // Global Variables
@@ -497,19 +539,41 @@ function mainCode() {
         };
     });
     $("#assetOverlayRangeCalculatorOptions1, #assetOverlayRangeCalculatorOptions2").click(function() {
-        $("#assetOverlayRangeCalculatorOptions" + assetOverlayRangeCalculator).css({
-            fontWeight: "normal",
-            color: "#B4B4B4"
-        });
-        if (assetOverlayRangeCalculator == 2) {
-            assetOverlayRangeCalculator--;
-        } else {
-            assetOverlayRangeCalculator++;
+        if ($(this).attr("id").substr($(this).attr("id").length - 1, 1) != assetOverlayRangeCalculator) {
+            $("#assetOverlayRangeCalculatorOptions" + assetOverlayRangeCalculator).css({
+                fontWeight: "normal",
+                color: "#B4B4B4"
+            });
+            if (assetOverlayRangeCalculator == 2) {
+                assetOverlayRangeCalculator--;
+                $(".assetOverlayCost").animate({
+                    opacity: "0",
+                    zIndex: "2"
+                }, 200);
+                setTimeout(function() {
+                    $(".assetOverlayProfit").animate({
+                        opacity: "1",
+                        zIndex: "5"
+                    }, 200);
+                }, 100);
+            } else {
+                assetOverlayRangeCalculator++;
+                $(".assetOverlayProfit").animate({
+                    opacity: "0",
+                    zIndex: "2"
+                }, 200);
+                setTimeout(function() {
+                    $(".assetOverlayCost").animate({
+                        opacity: "1",
+                        zIndex: "5"
+                    }, 200);
+                }, 100);
+            };
+            $("#assetOverlayRangeCalculatorOptions" + assetOverlayRangeCalculator).css({
+                fontWeight: "bold",
+                color: "#FBFBFF"
+            });
         };
-        $("#assetOverlayRangeCalculatorOptions" + assetOverlayRangeCalculator).css({
-            fontWeight: "bold",
-            color: "#FBFBFF"
-        });
     })
     $(window).resize(function() {
         setTimeout(function() {
@@ -553,11 +617,10 @@ function mainCode() {
         }, 0);
     });
     $("#assetOverlayCostQuantity").keyup(function() {
-        if (isNaN($("#assetOverlayCostQuantity").val()) == false && $("#assetOverlayCostQuantity").val().length > 0) {
-            $("#assetOverlayCostQuantityLabel3").html("Total Cost - " + currentCurrency + parseFloat($("#assetOverlayCostQuantity").val()) * chartValues[chartValues.length - 1]);
-        } else {
-            $("#assetOverlayCostQuantityLabel3").html("");
-        };
+        costCalculatorCalculate();
+    });
+    $("#assetOverlayProfitQuantity, #assetOverlayProfitCost, #assetOverlayProfitCurrency, #assetOverlayProfitDate").keyup(function() {
+        profitCalculatorCalculate();
     });
 };
 

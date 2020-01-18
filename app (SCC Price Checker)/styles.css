@@ -23,11 +23,15 @@ body {
     overflow: hidden;
     background: var(--backgroundColour);
     background-image: url("background.png");
-    background-image: url("background.png"), linear-gradient(#ffffff 15%, #000000 85%);
+    background-image: url("background.png"), linear-gradient(#ffffff 25%, #555555 75%);
     background-repeat: no-repeat;
     background-size: cover;
     background-blend-mode: overlay;
     background-position: center;
+}
+
+::-webkit-input-placeholder {
+    font-size: 12px;
 }
 
 /* Search Bar */
@@ -301,7 +305,7 @@ body {
     margin-top: calc(40vh + 110px);
 }
 
-#assetOverlayCostQuantity, #assetOverlayCostPrice {
+#assetOverlayCostQuantity, #assetOverlayCostPrice, #assetOverlayProfitQuantity, #assetOverlayProfitCost, #assetOverlayProfitCurrency, #assetOverlayProfitDate {
     width: 75px;
     height: 45px;
     background-color: transparent;
@@ -318,7 +322,7 @@ body {
     font-family: 'Montserrat', sans-serif;
 }   
 
-#assetOverlayCostQuantity:hover, #assetOverlayCostQuantity:focus {
+#assetOverlayCostQuantity:hover, #assetOverlayCostQuantity:focus, #assetOverlayProfitQuantity:hover, #assetOverlayProfitQuantity:focus, #assetOverlayProfitCost:hover, #assetOverlayProfitCost:focus, #assetOverlayProfitCurrency:hover, #assetOverlayProfitCurrency:focus, #assetOverlayProfitDate:hover, #assetOverlayProfitDate:focus {
     border: 1px solid var(--colourGhostWhite);
     border-top: none;
     border-left: none;
@@ -327,7 +331,7 @@ body {
     transition: 0.2s;
 }
 
-.assetOverlayCostQuantityLabel {
+.assetOverlayCostQuantityLabel, .assetOverlayProfitQuantityLabel {
     position: absolute;
     color: var(--colourGhostWhite);
     margin-left: 5px;
@@ -338,25 +342,51 @@ body {
     background-color: var(--backgroundColour);
 }
 
-#assetOverlayCostQuantityLabel2 {
+#assetOverlayCostQuantityLabel2, #assetOverlayProfitQuantityLabel2, #assetOverlayProfitQuantityLabel3, #assetOverlayProfitQuantityLabel4 {
     margin-top: -55px;
     margin-left: 120px;
-    width: 100px;
+    width: 150px;
 }
 
-#assetOverlayCostQuantityLabel3 {
+#assetOverlayProfitQuantityLabel3 {
+    margin-left: 270px;
+}
+
+#assetOverlayProfitQuantityLabel4 {
+    margin-left: 445px;
+}
+
+#assetOverlayCostQuantityLabel3, #assetOverlayProfitQuantityLabel5 {
     margin-top: 25px;
 }
 
-#assetOverlayCostPrice {
+#assetOverlayCostPrice, #assetOverlayProfitCost, #assetOverlayProfitCurrency, #assetOverlayProfitDate {
     margin-left: 40px;
     width: 100px;
 }
 
-.assetOverlayCost {
+#assetOverlayProfitCost {
+    width: 110px;
+}
+
+#assetOverlayProfitCurrency {
+    width: 130px;
+    text-transform: uppercase;
+}
+
+.assetOverlayCost, .assetOverlayProfit {
     margin-top: calc(40vh + 200px);
     position: absolute;
     margin-left: 140px;
+    z-index: 5;
+}
+
+.assetOverlayProfit {
+    opacity: 0;
+    z-index: 2;
+}
+
+.assetOverlayCost {
     z-index: 5;
 }
 
