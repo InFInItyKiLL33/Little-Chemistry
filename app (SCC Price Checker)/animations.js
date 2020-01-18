@@ -12,14 +12,33 @@ function getSearch() {
         "Singapore Airlines Ltd.": "C6L",
         "Tesla Inc": "TSLA"
     };
-    availableCurrency = {
-        "United States Dollar": "USD",
-        "Singapore Dollar": "SGD"
+    availableCurrencyMaster = {
+        "Canadian Dollar": "CAD",
+        "Chinese Yuan": "CNY",
+        "Euro": "EUR",
+        "Indian Rupee": "INR",
+        "Japanese Yen": "JPY",
+        "Pound Sterling": "GBP",
+        "Singapore Dollar": "SGD",
+        "United States Dollar": "USD"
     };
-    availableCryptocurrency = {
+    availableCryptocurrencyMaster = {
         "Bitcoin": "BTC",
         "Ethereum": "ETH"
     };
+    availableCurrency = {};
+    availableCryptocurrency = {};
+    for (item in availableCurrencyMaster) {
+        if (availableCurrencyMaster[item] != currentCurrency) {
+            availableCurrency[item] = availableCurrencyMaster[item];
+        };
+    };
+    for (item in availableCryptocurrencyMaster) {
+        if (availableCryptocurrencyMaster[item] != currentCurrency) {
+            availableCryptocurrency[item] = availableCryptocurrencyMaster[item];
+        };
+    };
+
     currentPrice = 987.65;
     currentTrend = 2; // 0 for down, 1 for neutral, 2 for up
     // End of to-change
@@ -93,7 +112,6 @@ function unhoverContent(hoverID) {
 };
 
 function searchBarSearch(clickedID, type) { // type is just used to bypass same search check
-    iconColours = ["#01BAEF", "#20BF55", "#eaee00"];
     if ($("#searchBar").val() != previousSearch || type == 1) { // checking for if the search is the same (e.g. pressing control button)
         setTimeout(function() {
             $(".dropdownElementMaster").remove();
@@ -124,6 +142,10 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
             $("#searchDivider").animate({ // show the divider between searchbar and options
                 opacity: "1"
             }, 50);
+            $("#topAssetsBody, #topAssets, #topAssetsDivider0").animate({
+                marginTop: $(window).height(),
+                opacity: 0
+            }, 250);
             setTimeout(function() {
                 for (var i = 0; i < 3; i++) {
                     lengthsSum += displayableListLengths[i];
@@ -175,7 +197,7 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                 if (noResults == 0) {
                     $(".dropdownElementMaster").hover(function() {
                         $(this).stop().animate({
-                            backgroundColor: "rgba(34, 34, 34, 1)"
+                            backgroundColor: "rgba(255, 255, 255, 0.2)"
                         }, 100);
                     }, function() {
                         $(this).stop().animate({
@@ -186,39 +208,7 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                         "cursor": "hand"
                     });
                     $(".dropdownElementMaster").click(function() {
-                        showAssetOverlay($(this).find("#itemShortName").html(), $(this).find("#itemLongName").html());
-                        assetOverlayEnabled = 1;
-                        setTimeout(function() {
-                            if (searchContent == 1) {
-                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
-                                    stroke: "#20BF55"
-                                });
-                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
-                                    fill: "url(#MyGradient2)"
-                                });
-                            } else if (searchContent == 2) {
-                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
-                                    stroke: "#eaee00"
-                                });
-                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
-                                    fill: "url(#MyGradient3)"
-                                });
-                            } else {
-                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
-                                    stroke: "#01BAEF"
-                                });
-                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
-                                    fill: "url(#MyGradient1)"
-                                });
-                            };
-                            $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
-                            $("#assetOverlayAssetPrice").html(currentCurrency + chartValues[chartValues.length - 1]);
-                            $("#assetOverlayRangeCalculatorLabel").css({
-                                color: iconColours[clickedID]
-                            });
-                            costCalculatorCalculate();
-                            profitCalculatorCalculate();
-                        }, 150);
+                        dropdownElementMasterClicked($(this), 0);
                     })
                 } else {
                     $(".dropdownElementMaster").css({
@@ -239,10 +229,73 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                 height: "0px",
                 marginTop: "0px"
             }, 100);
+            $("#topAssetsBody").animate({
+                marginTop: $(window).height() * 0.45,
+                opacity: 1
+            }, 400);
+            $("#topAssets").animate({
+                marginTop: $(window).height() * 0.36,
+                opacity: 1
+            }, 400);
+            $("#topAssetsDivider0").animate({
+                marginTop: $(window).height() * 0.41,
+                opacity: 1
+            }, 400);
         };
     };
     previousSearch = $("#searchBar").val();
-}
+};
+
+function dropdownElementMasterClicked(thisElement, dropdownOrTop) {
+    if (dropdownOrTop == 0) {
+        currentOverlayAsset = thisElement.find("#itemShortName").html();
+        showAssetOverlay(thisElement.find("#itemShortName").html(), thisElement.find("#itemLongName").html());
+    } else {
+        currentOverlayAsset = thisElement.find(".topAssetsShortName").html();
+        showAssetOverlay(thisElement.find(".topAssetsShortName").html(), thisElement.find(".topAssetsLongName").html());
+    };
+    assetOverlayEnabled = 1;
+    setTimeout(function() {
+        if (searchContent == 1 || searchContentTopAsset == 1) {
+            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                stroke: "#20BF55"
+            });
+            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                fill: "url(#MyGradient2)"
+            });
+        } else if (searchContent == 2 || searchContentTopAsset == 2) {
+            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                stroke: "#eaee00"
+            });
+            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                fill: "url(#MyGradient3)"
+            });
+        } else {
+            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                stroke: "#01BAEF"
+            });
+            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                fill: "url(#MyGradient1)"
+            });
+        };
+        $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
+        $("#assetOverlayAssetPrice").html(currentCurrency + chartValues[chartValues.length - 1]);
+        if (searchContentTopAsset != searchContent) {
+            if (searchContent > searchContentTopAsset) {
+                var tempSearchContent = searchContent;
+            } else {
+                var tempSearchContent = searchContentTopAsset
+            };
+        } else {
+            var tempSearchContent = searchContent
+        };
+        $("#assetOverlayRangeCalculatorLabel").css({
+            color: iconColours[tempSearchContent]
+        });
+        costCalculatorCalculate();
+        profitCalculatorCalculate();
+    }, 150);
+};
 
 function searchBarHighlight() {
     $("#searchBar").css({
@@ -306,6 +359,8 @@ function hideAssetOverlay() {
         marginTop: ($(window).height() * -1).toString() + "px"
     }, 400);
     assetOverlayEnabled = 0;
+    currentOverlayAsset = "";
+    searchContentTopAsset = 0;
 };
 
 function showAssetOverlay(shortAssetName, longAssetName) {
@@ -367,9 +422,9 @@ function profitCalculatorCalculate() {
         } else {
             var currencyType = 0;
         };
+        var valueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * chartValues[chartValues.length - 1]) - parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * $("#assetOverlayProfitCost").val())) * 100) / 100
+        var percentageChange = Math.round((valueChange / $("#assetOverlayProfitQuantity").val()) / chartValues[chartValues.length - 1] * 10000) / 100;
         if (currentCurrency == $("#assetOverlayProfitCurrency").val().toUpperCase()) {
-            var valueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * chartValues[chartValues.length - 1]) - parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * $("#assetOverlayProfitCost").val())) * 100) / 100
-            var percentageChange = Math.round((valueChange / $("#assetOverlayProfitQuantity").val()) / chartValues[chartValues.length - 1] * 10000) / 100
             if (valueChange > 0) {
                 $("#assetOverlayProfitQuantityLabel5").html("Profit +" + currentCurrency + valueChange + " (+" + percentageChange + "%)");
                 $("#assetOverlayProfitQuantityLabel5").stop().animate({
@@ -386,6 +441,29 @@ function profitCalculatorCalculate() {
                     color: "#757575"
                 }, 100);
             };
+        } else {
+            // get forex exchange rate once available & change the following lines of code
+            var exchangeRate = 1
+            // end of change
+            var finalLocalValueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * chartValues[chartValues.length - 1]) - parseFloat($("#assetOverlayProfitQuantity").val()) * exchangeRate * $("#assetOverlayProfitCost").val()) * 100) / 100
+            var percentageChangeLocal = Math.round((finalLocalValueChange / $("#assetOverlayProfitQuantity").val()) / chartValues[chartValues.length - 1] * 10000) / 100;
+            if (valueChange > 0) {
+                $("#assetOverlayProfitQuantityLabel5").html("Profit +" + currentCurrency + valueChange + " (+" + percentageChange + "%) / +" + $("#assetOverlayProfitCurrency").val().toUpperCase() + finalLocalValueChange + " (+" + percentageChangeLocal + "%)");
+                $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                    color: iconColours[1]
+                }, 100);
+            } else if (valueChange < 0) {
+                $("#assetOverlayProfitQuantityLabel5").html("Profit -" + currentCurrency + Math.abs(valueChange) + " (" + percentageChange + "%) / -" + $("#assetOverlayProfitCurrency").val().toUpperCase() + Math.abs(finalLocalValueChange) + " (" + percentageChangeLocal + "%)");
+                $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                    color: "red"
+                }, 100);
+            } else {
+                $("#assetOverlayProfitQuantityLabel5").html("Profit " + currentCurrency + "0 (0%) / " + $("#assetOverlayProfitCurrency").val().toUpperCase() + "0 (0%)");
+                $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                    color: "#757575"
+                }, 100);
+            };
+
         };
     } else {
         $("#assetOverlayProfitQuantityLabel5").html("");
@@ -394,6 +472,7 @@ function profitCalculatorCalculate() {
 
 // Global Variables
 var searchContent = 0; // 0 for stocks, 1 for currency, 2 for crypto
+var searchContentTopAsset = 0; // 0 for stocks, 1 for currency, 2 for crypto
 var previousSearch = ""; // to disable refresh if there is no change
 var searchBarFocused = false;
 var currencyChangeClicked = 0; // index of supportedCurrencies
@@ -413,6 +492,8 @@ var assetOverlayRangeOptions = {
 var assetChart;
 var chartData;
 var chartDataOptions;
+var currentOverlayAsset; // what is being showed
+var iconColours = ["#01BAEF", "#20BF55", "#eaee00"];
 
 function mainCode() {
     if (searchContent == 0) {
@@ -498,6 +579,9 @@ function mainCode() {
     });
     $(".searchCurrencyList").click(function() {
         if ($(this).attr("id") != "searchCurrencyList1" && currencyChangeClicked == 1) {
+            if (currentOverlayAsset == $(this).html()) {
+                return;
+            };
             var clickedCurrency = $(this).html();
             var supportedCurrenciesTemp = [clickedCurrency];
             for (var itemIndex = 0; itemIndex < supportedCurrencies.length; itemIndex++) {
@@ -515,7 +599,10 @@ function mainCode() {
             };
             searchCurrency1Click();
             currentCurrency = supportedCurrenciesTemp[0];
-            $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
+            if (typeof chartValues !== 'undefined') {
+                $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
+            };
+            searchBarSearch(searchContent, 1);
             mainCode();
         } else if ($(this).attr("id") != "searchCurrencyList1" && assetOverlayEnabled == 1) {
             hideAssetOverlay();
@@ -590,15 +677,17 @@ function mainCode() {
                     left: $(window).width() * 0.05
                 },
             };
-            assetChart.update(chartData, chartDataOptions);
-            if (searchContent == 1) {
+            if (typeof chartValues !== 'undefined') {
+                assetChart.update(chartData, chartDataOptions);
+            };
+            if (searchContent == 1 || searchContentTopAsset == 1) {
                 $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
                     stroke: "#20BF55"
                 });
                 $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
                     fill: "url(#MyGradient2)"
                 });
-            } else if (searchContent == 2) {
+            } else if (searchContent == 2 || searchContentTopAsset == 2) {
                 $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
                     stroke: "#eaee00"
                 });
@@ -622,6 +711,12 @@ function mainCode() {
     $("#assetOverlayProfitQuantity, #assetOverlayProfitCost, #assetOverlayProfitCurrency, #assetOverlayProfitDate").keyup(function() {
         profitCalculatorCalculate();
     });
+    $(".topAssetsAsset1, .topAssetsAsset2, .topAssetsAsset3").click(function() {
+        if ($(this).find(".topAssetsShortName").html() != currentCurrency) {
+            searchContentTopAsset = $(this).attr("class").substr($(this).attr("class").length - 1, 1) - 1;
+            dropdownElementMasterClicked($(this), 1);
+        };
+    });
 };
 
 function mouseMove() {
@@ -642,15 +737,24 @@ function mouseMove() {
                             break
                         };
                     };
+                    if (searchContentTopAsset != searchContent) {
+                        if (searchContent > searchContentTopAsset) {
+                            var tempSearchContent = searchContent;
+                        } else {
+                            var tempSearchContent = searchContentTopAsset
+                        };
+                    } else {
+                        var tempSearchContent = searchContent
+                    };
                     $("#chartHighlighter").css({
-                        backgroundColor: iconColours[searchContent],
+                        backgroundColor: iconColours[tempSearchContent],
                         marginLeft: lineX,
                         opacity: 0.25,
                         marginTop: $("svg").find("line")[0]["y1"]["baseVal"]["value"], 
                         height: $("svg").find("line")[0]["y2"]["baseVal"]["value"] - $("svg").find("line")[0]["y1"]["baseVal"]["value"]
                     });
                     $("#chartHighlighterPrice").css({
-                        color: iconColours[searchContent],
+                        color: iconColours[tempSearchContent],
                         marginLeft: lineX - 37.5,
                         marginTop: $("svg").find("line")[0]["y2"]["baseVal"]["value"] + 10
                     });
