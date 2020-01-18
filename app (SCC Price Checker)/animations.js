@@ -111,16 +111,16 @@ function unhoverContent(hoverID) {
 };
 
 function searchBarSearchEnd() {
-    // setTimeout(function() {
-    //     $(".dropdownElementIcon").animate({
-    //         "backgroundColor": iconColours[clickedID]
-    //     }, 0);
-    // }, 150);
+    setTimeout(function() {
+        $(".dropdownElementIcon").animate({
+            "backgroundColor": iconColours[searchContent]
+        }, 0);
+    }, 150);
     setTimeout(function() {
         if (noResults == 0) {
             $(".dropdownElementMaster").hover(function() {
                 $(this).stop().animate({
-                    backgroundColor: "rgba(255, 255, 255, 0.2)"
+                    backgroundColor: "rgba(255, 255, 255, 0.1)"
                 }, 100);
             }, function() {
                 $(this).stop().animate({
@@ -131,7 +131,10 @@ function searchBarSearchEnd() {
                 "cursor": "hand"
             });
             $(".dropdownElementMaster").click(function() {
-                dropdownElementMasterClicked($(this), 0);
+                if (itemPriceClick == 0) {
+                    dropdownElementMasterClicked($(this), 0);
+                };
+                itemPriceClick = 0;
             })
         } else {
             $(".dropdownElementMaster").css({
@@ -185,33 +188,60 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                     for (var i = 0; i < displayableListLengths[searchContent]; i++) {
                         // console.log(displayableList[searchContent][i][1], searchContent + 1, currentCurrency, apiKeys[i % 12], i, displayableList, searchContent);
                         // console.log(apiKeyToUse);
-                        var apiKeyToUse = getApiKeyIndex();
-                        CurrentAssetPrice(displayableList[searchContent][i][1], searchContent + 1, currentCurrency, apiKeyToUse, i, displayableList, searchContent);
+                        // var apiKeyToUse = getApiKeyIndex();
+                        // CurrentAssetPrice(displayableList[searchContent][i][1], searchContent + 1, currentCurrency, apiKeyToUse, i, displayableList, searchContent, 1, -1);
                         
                         // currentPrice = Math.round(Math.random() * 10000)/100;
                         // currentTrend = Math.round(Math.random() * 2);
+                        
+                        currentPrice = "Fetch Price";
+                        currentTrend = 1;
 
-                        // $(".dropdownAppender").append(
-                        //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
-                        //     + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
-                        //     + "<div class = 'dropdownElement' id = 'itemShortName'>" + displayableList[searchContent][i][1] + "</div>" 
-                        //     + "<div class = 'dropdownElement' id = 'itemLongName'>" + displayableList[searchContent][i][0] + "</div>" 
-                        //     + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + currentPrice + "</div>"
-                        //     + "</div>"
-                        // );
-                        // if (currentTrend == 2) {
-                        //     $("#itemPrice" + i.toString()).animate({
-                        //         color: "#32a852"
-                        //     }, 0);
-                        // } else if (currentTrend == 0) {
-                        //     $("#itemPrice" + i.toString()).animate({
-                        //         color: "#a83232"
-                        //     }, 0);
-                        // } else {
-                        //     $("#itemPrice" + i.toString()).animate({
-                        //         color: "#696969"
-                        //     }, 0);
-                        // };
+                        $(".dropdownAppender").append(
+                            "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
+                            + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
+                            + "<div class = 'dropdownElement' id = 'itemShortName'>" + displayableList[searchContent][i][1] + "</div>" 
+                            + "<div class = 'dropdownElement' id = 'itemLongName'>" + displayableList[searchContent][i][0] + "</div>" 
+                            + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center; margin-top: -12.5px; padding-top: 12.5px;'>" + currentPrice + "</div>"
+                            + "</div>"
+                        );
+                        if (currentTrend == 2) {
+                            $("#itemPrice" + i.toString()).animate({
+                                color: "#32a852"
+                            }, 0);
+                        } else if (currentTrend == 0) {
+                            $("#itemPrice" + i.toString()).animate({
+                                color: "#a83232"
+                            }, 0);
+                        } else {
+                            $("#itemPrice" + i.toString()).animate({
+                                color: "#FFFFFF"
+                            }, 0);
+                        };
+                        $("#itemPrice" + i).click(function() {
+                            itemPriceClick = 1;
+                            if ($(this).siblings("#itemShortName").html() == "BTC" || $(this).siblings("#itemShortName").html() == "ETH") {
+                                var currencyType = 3;
+                            } else if (supportedCurrencies.includes($(this).siblings("#itemShortName").html())) {
+                                var currencyType = 2;
+                            } else {
+                                var currencyType = 1;
+                            };
+                            console.log($(this).siblings("#itemShortName").html(), currencyType, currentCurrency, getApiKeyIndex(), -1, -1, -1, 0, $(this));
+                            CurrentAssetPrice($(this).siblings("#itemShortName").html(), currencyType, currentCurrency, getApiKeyIndex(), -1, -1, -1, 0, $(this));
+                        });
+                        $("#itemPrice" + i).css({
+                            borderRadius: "25px"
+                        });
+                        $("#itemPrice" + i).hover(function() {
+                            $(this).animate({
+                                backgroundColor: "rgba(255, 255, 255, 0.1)"
+                            }, 200);
+                        }, function() {
+                            $(this).animate({
+                                backgroundColor: "transparent"
+                            }, 200);
+                        });
                     };
                     noResults = 0
                 } else {
@@ -219,9 +249,10 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                         "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
                         + "<div class = 'dropdownElement' id = 'noResultsFoundText'>No Results Found</div>"
                         + "</div>"
-                    );
+                        );
                     noResults = 1
                 };
+                searchBarSearchEnd();
             }, 75);
         } else {
             // $("#searchIcon").show();
@@ -424,11 +455,6 @@ function costCalculatorCalculate() {
 
 function profitCalculatorCalculate() {
     if (isNaN($("#assetOverlayProfitQuantity").val()) == false && $("#assetOverlayProfitQuantity").val().length > 0 && isNaN($("#assetOverlayProfitCost").val()) == false && $("#assetOverlayProfitCost").val().length > 0 && $("#assetOverlayProfitCurrency").val().length == 3 && $("#assetOverlayProfitDate").val().length == 10 && $("#assetOverlayProfitDate").val().split("/").join("").length == 8 && supportedCurrencies.includes($("#assetOverlayProfitCurrency").val().toUpperCase())) {
-        if ($("#assetOverlayProfitCurrency").val() == "BTC" || $("#assetOverlayProfitCurrency").val() == "ETH") {
-            var currencyType = 1;
-        } else {
-            var currencyType = 0;
-        };
         var valueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * chartValues[chartValues.length - 1]) - parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * $("#assetOverlayProfitCost").val())) * 100) / 100
         var percentageChange = Math.round((valueChange / $("#assetOverlayProfitQuantity").val()) / chartValues[chartValues.length - 1] * 10000) / 100;
         if (currentCurrency == $("#assetOverlayProfitCurrency").val().toUpperCase()) {
@@ -502,7 +528,9 @@ var chartDataOptions;
 var currentOverlayAsset; // what is being showed
 var iconColours = ["#01BAEF", "#20BF55", "#eaee00"];
 var apiKeys = ["LL9OYIHQJD5XMNE1", "JF7Z9QHP1U2JD76S", "TVFNWRYCJ1S8ZIU6", "4RWXX1WJ5GKA7FQ2", "F70TY6F2A0VSNQSG", "GRLI8I9OM49REPHF", "BR15F1IL8U7DA6YF", "9UATAN950FMHV839", "IN9RN77V4QB1SEQZ", "EXYSUMI564KT2RTT", "Y3314J35NB35A3KB", "QX5E2BW31O2KWQBI", "2FD1MUZPUS37BW19", "SSH7H4CRQYF83GBC", "J611ZW8X7UARIF5B", "Q9Q1V765H036J5AJ", "HJSDLRBBL3BEAC38", "NIEXXV2W7T4XAKSM", "0WFT025L3S3F98EP", "QB13EO7ISS1KQWEM", "9YSF29J5YQKRBUKE", "M38XUX9TC3HP3PWO", "451N79J8ZHNQY8F5", "QT534D7MKXVKF94T"]
-var apiKeyIndex = 11
+var apiKeyIndex = -1;
+var topAssetsPriceClick = 0;
+itemPriceClick = 0;
 
 function mainCode() {
     if (searchContent == 0) {
@@ -611,6 +639,10 @@ function mainCode() {
             if (typeof chartValues !== 'undefined') {
                 $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
             };
+            $(".topAssetsPrice").html("Fetch Price");
+            $(".topAssetsPrice").animate({
+                "color": "#FFFFFF"
+            }, 200);
             searchBarSearch(searchContent, 1);
             mainCode();
         } else if ($(this).attr("id") != "searchCurrencyList1" && assetOverlayEnabled == 1) {
@@ -721,10 +753,33 @@ function mainCode() {
         profitCalculatorCalculate();
     });
     $(".topAssetsAsset1, .topAssetsAsset2, .topAssetsAsset3").click(function() {
-        if ($(this).find(".topAssetsShortName").html() != currentCurrency) {
+        if ($(this).find(".topAssetsShortName").html() != currentCurrency && topAssetsPriceClick == 0) {
             searchContentTopAsset = $(this).attr("class").substr($(this).attr("class").length - 1, 1) - 1;
             dropdownElementMasterClicked($(this), 1);
+            topAssetsPriceClick = 0;
         };
+    });
+    $(".topAssetsPrice").click(function() {
+        topAssetsPriceClick = 1;
+        $(this).css({
+            backgroundColor: "transparent"
+        });
+        var shortName = $(this).siblings(".topAssetsShortName").html();
+        // var longName = $(this).siblings(".topAssetsLongName").html();
+        var type = parseInt($(this).siblings()[0]["attributes"]["class"]["value"].substr($(this).siblings()[0]["attributes"]["class"]["value"].length - 1, 1));
+        CurrentAssetPrice(shortName, type, currentCurrency, getApiKeyIndex(), -1, -1, -1, 0, $(this));
+        // console.log(shortName, longName, type)
+    });
+    $(".topAssetsPrice").hover(function() {
+        if ($(this).html() == "Fetch Price") {
+            $(this).css({
+                backgroundColor: "rgba(255, 255, 255, 0.1)"
+            });
+        };
+    }, function() {
+        $(this).css({
+            backgroundColor: "transparent"
+        });
     });
 };
 
@@ -775,11 +830,17 @@ function mouseMove() {
 };
 
 window.AssetName = {};
-function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayableList, searchContent){
-    console.log(apiKey);
-    window.AssetName[AssetName] = i;
-    window.displayableList = displayableList;
-    window.searchContent = searchContent;
+function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayableList, searchContent, homeOrSearch, currentObject) {
+    // console.log(apiKey);
+    if (currentObject == -1) {
+        // window.AssetName[AssetName] = i;
+        // window.displayableList = displayableList;
+        // window.searchContent = searchContent;
+    } else {
+        window.editableObject = currentObject;
+    };
+    window.homeOrSearch = homeOrSearch;
+    window.baseCurrency = BaseCurrency;
     // Ask for the type of Asset
     if (Type == 1) {
         var link = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+AssetName+"&apikey="+apiKey
@@ -803,29 +864,46 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                     } else{
                         change = 0;
                     }
-                    window.output = [price, change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
-                    $(".dropdownAppender").append(
-                        "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
-                        + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
-                        + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data["Global Quote"]["01. symbol"]]][1] + "</div>" 
-                        + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data["Global Quote"]["01. symbol"]]][0] + "</div>" 
-                        + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
-                        + "</div>"
-                    );
-                    if (window.output[1] == 2) {
-                        $("#itemPrice" + window.AssetName[data["Global Quote"]["01. symbol"]].toString()).animate({
-                            color: "#32a852"
-                        }, 0);
-                    } else if (window.output[1] == 0) {
-                        $("#itemPrice" + window.AssetName[data["Global Quote"]["01. symbol"]].toString()).animate({
-                            color: "#a83232"
-                        }, 0);
+                    window.output = [Math.round(price * 1000) / 1000, change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                    if (currentObject == -1) {
+                        // $(".dropdownAppender").append(
+                        //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
+                        //     + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
+                        //     + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data["Global Quote"]["01. symbol"]]][1] + "</div>" 
+                        //     + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data["Global Quote"]["01. symbol"]]][0] + "</div>" 
+                        //     + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
+                        //     + "</div>"
+                        // );
+                        // if (window.output[1] == 2) {
+                        //     $("#itemPrice" + window.AssetName[data["Global Quote"]["01. symbol"]].toString()).animate({
+                        //         color: "#32a852"
+                        //     }, 0);
+                        // } else if (window.output[1] == 0) {
+                        //     $("#itemPrice" + window.AssetName[data["Global Quote"]["01. symbol"]].toString()).animate({
+                        //         color: "#a83232"
+                        //     }, 0);
+                        // } else {
+                        //     $("#itemPrice" + window.AssetName[data["Global Quote"]["01. symbol"]].toString()).animate({
+                        //         color: "#ffffff"
+                        //     }, 0);
+                        // };
+                        // searchBarSearchEnd();
                     } else {
-                        $("#itemPrice" + window.AssetName[data["Global Quote"]["01. symbol"]].toString()).animate({
-                            color: "#696969"
-                        }, 0);
+                        window.editableObject.html(window.baseCurrency + window.output[0]);
+                        if (window.output[1] == 2) {
+                            window.editableObject.animate({
+                                color: "#32a852"
+                            }, 0);
+                        } else if (window.output[1] == 0) {
+                            window.editableObject.animate({
+                                color: "#a83232"
+                            }, 0);
+                        } else {
+                            window.editableObject.animate({
+                                color: "#ffffff"
+                            }, 0);
+                        };
                     };
-                    searchBarSearchEnd();
                     //console.log(output);
                 } else if (Type == 1 && BaseCurrency != "USD" ) {
                     window.raw = data["Global Quote"]["05. price"];
@@ -842,29 +920,46 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                         data1 = $.getJSON("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency="+currency+"&apikey="+api, function(json) {}).done(function(data1) {
                             var effective_price;
                             effective_price = raw*data1["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
-                            window.output = [effective_price, effective_change]; // **************OUTPUT**************** NOTE: effective_change(1 => Positive change, 0=> Negative change)
-                            $(".dropdownAppender").append(
-                                "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
-                                + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
-                                + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data1["Meta Data"]["3. To Symbol"]]][1] + "</div>" 
-                                + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data1["Meta Data"]["3. To Symbol"]]][0] + "</div>" 
-                                + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
-                                + "</div>"
-                            );
-                            if (window.output[1] == 2) {
-                                $("#itemPrice" + window.AssetName[data1["Meta Data"]["3. To Symbol"]].toString()).animate({
-                                    color: "#32a852"
-                                }, 0);
-                            } else if (window.output[1] == 0) {
-                                $("#itemPrice" + window.AssetName[data1["Meta Data"]["3. To Symbol"]].toString()).animate({
-                                    color: "#a83232"
-                                }, 0);
+                            window.output = [Math.round(effective_price * 1000) / 1000, effective_change]; // **************OUTPUT**************** NOTE: effective_change(1 => Positive change, 0=> Negative change)
+                            if (currentObject == -1) {
+                                // $(".dropdownAppender").append(
+                                //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
+                                //     + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
+                                //     + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data1["Meta Data"]["3. To Symbol"]]][1] + "</div>" 
+                                //     + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data1["Meta Data"]["3. To Symbol"]]][0] + "</div>" 
+                                //     + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
+                                //     + "</div>"
+                                // );
+                                // if (window.output[1] == 2) {
+                                //     $("#itemPrice" + window.AssetName[data1["Meta Data"]["3. To Symbol"]].toString()).animate({
+                                //         color: "#32a852"
+                                //     }, 0);
+                                // } else if (window.output[1] == 0) {
+                                //     $("#itemPrice" + window.AssetName[data1["Meta Data"]["3. To Symbol"]].toString()).animate({
+                                //         color: "#a83232"
+                                //     }, 0);
+                                // } else {
+                                //     $("#itemPrice" + window.AssetName[data1["Meta Data"]["3. To Symbol"]].toString()).animate({
+                                //         color: "#ffffff"
+                                //     }, 0);
+                                // };
+                                // searchBarSearchEnd();
                             } else {
-                                $("#itemPrice" + window.AssetName[data1["Meta Data"]["3. To Symbol"]].toString()).animate({
-                                    color: "#696969"
-                                }, 0);
+                                window.editableObject.html(window.baseCurrency + window.output[0]);
+                                if (window.output[1] == 2) {
+                                    window.editableObject.animate({
+                                        color: "#32a852"
+                                    }, 0);
+                                } else if (window.output[1] == 0) {
+                                    window.editableObject.animate({
+                                        color: "#a83232"
+                                    }, 0);
+                                } else {
+                                    window.editableObject.animate({
+                                        color: "#ffffff"
+                                    }, 0);
+                                };
                             };
-                            searchBarSearchEnd();
                             //console.log(output);
                         })
                     );
@@ -894,7 +989,7 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                         };
                         indexHere++;
                     };
-                    console.log(data);
+                    // console.log(data);
                     var rate = data["Time Series FX (60min)"][nowTime]["1. open"];
                     var change;
                     if (rate <= data["Time Series FX (60min)"][prevTime]["1. open"]) {
@@ -907,29 +1002,46 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                     // console.log(window.displayableList[window.searchContent])
                     // console.log(window.displayableList[window.searchContent][window.AssetName[data["Meta Data"]["3. To Symbol"]]])
                     // console.log(data["Meta Data"]["3. To Symbol"])
-                    window.output = [Math.pow(rate,-1), change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
-                    $(".dropdownAppender").append(
-                        "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
-                        + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
-                        + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data["Meta Data"]["3. To Symbol"]]][1] + "</div>" 
-                        + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data["Meta Data"]["3. To Symbol"]]][0] + "</div>" 
-                        + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
-                        + "</div>"
-                    );
-                    if (window.output[1] == 2) {
-                        $("#itemPrice" + window.AssetName[data["Meta Data"]["3. To Symbol"]].toString()).animate({
-                            color: "#32a852"
-                        }, 0);
-                    } else if (window.output[1] == 0) {
-                        $("#itemPrice" + window.AssetName[data["Meta Data"]["3. To Symbol"]].toString()).animate({
-                            color: "#a83232"
-                        }, 0);
+                    window.output = [Math.round(Math.pow(rate,-1) * 1000) / 1000, change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                    if (currentObject == -1) {
+                        // $(".dropdownAppender").append(
+                        //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
+                        //     + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
+                        //     + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data["Meta Data"]["3. To Symbol"]]][1] + "</div>" 
+                        //     + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data["Meta Data"]["3. To Symbol"]]][0] + "</div>" 
+                        //     + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
+                        //     + "</div>"
+                        // );
+                        // if (window.output[1] == 2) {
+                        //     $("#itemPrice" + window.AssetName[data["Meta Data"]["3. To Symbol"]].toString()).animate({
+                        //         color: "#32a852"
+                        //     }, 0);
+                        // } else if (window.output[1] == 0) {
+                        //     $("#itemPrice" + window.AssetName[data["Meta Data"]["3. To Symbol"]].toString()).animate({
+                        //         color: "#a83232"
+                        //     }, 0);
+                        // } else {
+                        //     $("#itemPrice" + window.AssetName[data["Meta Data"]["3. To Symbol"]].toString()).animate({
+                        //         color: "#ffffff"
+                        //     }, 0);
+                        // };
+                        // searchBarSearchEnd();
                     } else {
-                        $("#itemPrice" + window.AssetName[data["Meta Data"]["3. To Symbol"]].toString()).animate({
-                            color: "#696969"
-                        }, 0);
+                        window.editableObject.html(window.baseCurrency + window.output[0]);
+                        if (window.output[1] == 2) {
+                            window.editableObject.animate({
+                                color: "#32a852"
+                            }, 0);
+                        } else if (window.output[1] == 0) {
+                            window.editableObject.animate({
+                                color: "#a83232"
+                            }, 0);
+                        } else {
+                            window.editableObject.animate({
+                                color: "#ffffff"
+                            }, 0);
+                        };
                     };
-                    searchBarSearchEnd();
                     //console.log(output);
                 } else if (Type == 2 && ['BTC','ETH'].includes(BaseCurrency)){
                     window.api = apiKey;
@@ -948,29 +1060,46 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                                     } else{
                                         change = 0;
                                     };
-                                    window.output = [Math.pow(pricey,-1), change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
-                                    $(".dropdownAppender").append(
-                                        "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
-                                        + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
-                                        + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data2["Meta Data"]["3. To Symbol"]]][1] + "</div>" 
-                                        + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data2["Meta Data"]["3. To Symbol"]]][0] + "</div>" 
-                                        + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
-                                        + "</div>"
-                                    );
-                                    if (window.output[1] == 2) {
-                                        $("#itemPrice" + window.AssetName[data2["Meta Data"]["3. To Symbol"]].toString()).animate({
-                                            color: "#32a852"
-                                        }, 0);
-                                    } else if (window.output[1] == 0) {
-                                        $("#itemPrice" + window.AssetName[data2["Meta Data"]["3. To Symbol"]].toString()).animate({
-                                            color: "#a83232"
-                                        }, 0);
+                                    window.output = [Math.round(Math.pow(pricey,-1) * 1000) / 1000, change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                                    if (currentObject == -1) {
+                                        // $(".dropdownAppender").append(
+                                        //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
+                                        //     + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
+                                        //     + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data2["Meta Data"]["3. To Symbol"]]][1] + "</div>" 
+                                        //     + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data2["Meta Data"]["3. To Symbol"]]][0] + "</div>" 
+                                        //     + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
+                                        //     + "</div>"
+                                        // );
+                                        // if (window.output[1] == 2) {
+                                        //     $("#itemPrice" + window.AssetName[data2["Meta Data"]["3. To Symbol"]].toString()).animate({
+                                        //         color: "#32a852"
+                                        //     }, 0);
+                                        // } else if (window.output[1] == 0) {
+                                        //     $("#itemPrice" + window.AssetName[data2["Meta Data"]["3. To Symbol"]].toString()).animate({
+                                        //         color: "#a83232"
+                                        //     }, 0);
+                                        // } else {
+                                        //     $("#itemPrice" + window.AssetName[data2["Meta Data"]["3. To Symbol"]].toString()).animate({
+                                        //         color: "#ffffff"
+                                        //     }, 0);
+                                        // };
+                                        // searchBarSearchEnd();
                                     } else {
-                                        $("#itemPrice" + window.AssetName[data2["Meta Data"]["3. To Symbol"]].toString()).animate({
-                                            color: "#696969"
-                                        }, 0);
+                                        window.editableObject.html(window.baseCurrency + window.output[0]);
+                                        if (window.output[1] == 2) {
+                                            window.editableObject.animate({
+                                                color: "#32a852"
+                                            }, 0);
+                                        } else if (window.output[1] == 0) {
+                                            window.editableObject.animate({
+                                                color: "#a83232"
+                                            }, 0);
+                                        } else {
+                                            window.editableObject.animate({
+                                                color: "#ffffff"
+                                            }, 0);
+                                        };
                                     };
-                                    searchBarSearchEnd();
                                     //console.log(output);
                                 })
                             );
@@ -1000,29 +1129,46 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                                     } else {
                                         change = 0;
                                     };
-                                    window.output = [priceNow, change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
-                                    $(".dropdownAppender").append(
-                                        "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
-                                        + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
-                                        + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]]][1] + "</div>" 
-                                        + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]]][0] + "</div>" 
-                                        + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
-                                        + "</div>"
-                                    );
-                                    if (window.output[1] == 2) {
-                                        $("#itemPrice" + window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]].toString()).animate({
-                                            color: "#32a852"
-                                        }, 0);
-                                    } else if (window.output[1] == 0) {
-                                        $("#itemPrice" + window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]].toString()).animate({
-                                            color: "#a83232"
-                                        }, 0);
+                                    window.output = [Math.round(priceNow * 1000) / 1000, change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                                    if (currentObject == -1) {
+                                        // $(".dropdownAppender").append(
+                                        //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
+                                        //     + "<div class = 'dropdownElementIcon' id = 'itemIcon'></div>"
+                                        //     + "<div class = 'dropdownElement' id = 'itemShortName'>" + window.displayableList[window.searchContent][window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]]][1] + "</div>" 
+                                        //     + "<div class = 'dropdownElement' id = 'itemLongName'>" + window.displayableList[window.searchContent][window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]]][0] + "</div>" 
+                                        //     + "<div class = 'dropdownElement' id = 'itemPrice" + i.toString() + "' style = 'width: 125px; text-align: center;'>" + "$" + Math.round(window.output[0] * 100) / 100 + "</div>"
+                                        //     + "</div>"
+                                        // );
+                                        // if (window.output[1] == 2) {
+                                        //     $("#itemPrice" + window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]].toString()).animate({
+                                        //         color: "#32a852"
+                                        //     }, 0);
+                                        // } else if (window.output[1] == 0) {
+                                        //     $("#itemPrice" + window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]].toString()).animate({
+                                        //         color: "#a83232"
+                                        //     }, 0);
+                                        // } else {
+                                        //     $("#itemPrice" + window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]].toString()).animate({
+                                        //         color: "#ffffff"
+                                        //     }, 0);
+                                        // };
+                                        // searchBarSearchEnd();
                                     } else {
-                                        $("#itemPrice" + window.AssetName[data6["Realtime Currency Exchange Rate"]["1. From_Currency Code"]].toString()).animate({
-                                            color: "#696969"
-                                        }, 0);
+                                        window.editableObject.html(window.baseCurrency + window.output[0]);
+                                        if (window.output[1] == 2) {
+                                            window.editableObject.animate({
+                                                color: "#32a852"
+                                            }, 0);
+                                        } else if (window.output[1] == 0) {
+                                            window.editableObject.animate({
+                                                color: "#a83232"
+                                            }, 0);
+                                        } else {
+                                            window.editableObject.animate({
+                                                color: "#ffffff"
+                                            }, 0);
+                                        };
                                     };
-                                    searchBarSearchEnd();
                                     //console.log(output);
                                 })
                             );
