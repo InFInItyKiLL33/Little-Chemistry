@@ -227,7 +227,7 @@ function searchBarSearch(clickedID, type) { // type is just used to bypass same 
                             } else {
                                 var currencyType = 1;
                             };
-                            console.log($(this).siblings("#itemShortName").html(), currencyType, currentCurrency, getApiKeyIndex(), -1, -1, -1, 0, $(this));
+                            // console.log($(this).siblings("#itemShortName").html(), currencyType, currentCurrency, getApiKeyIndex(), -1, -1, -1, 0, $(this));
                             CurrentAssetPrice($(this).siblings("#itemShortName").html(), currencyType, currentCurrency, getApiKeyIndex(), -1, -1, -1, 0, $(this));
                         });
                         $("#itemPrice" + i).css({
@@ -316,8 +316,8 @@ function dropdownElementMasterClicked(thisElement, dropdownOrTop) {
                 fill: "url(#MyGradient1)"
             });
         };
-        $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
-        $("#assetOverlayAssetPrice").html(currentCurrency + chartValues[chartValues.length - 1]);
+        $("#assetOverlayCostPrice").val(currentCurrency + window.chartValues[window.chartValues.length - 1]);
+        $("#assetOverlayAssetPrice").html(currentCurrency + window.chartValues[window.chartValues.length - 1]);
         if (searchContentTopAsset != searchContent) {
             if (searchContent > searchContentTopAsset) {
                 var tempSearchContent = searchContent;
@@ -401,6 +401,82 @@ function hideAssetOverlay() {
     searchContentTopAsset = 0;
 };
 
+function showAssetOverlayPart2(shortAssetName) {
+    if (shortAssetName == "BTC" || shortAssetName == "ETH") {
+        var type = 3;
+    } else if (supportedCurrencies.includes(shortAssetName)) {
+        type = 2;
+    } else {
+        type = 1;
+    };
+    if (type == 1) {
+        randomOrNot = 0;
+        GraphPrice(shortAssetName, type, currentCurrency, assetOverlayRange - 1, "4RWXX1WJ5GKA7FQ2", searchContent, searchContentTopAsset, currentCurrency);
+    } else {
+        randomOrNot = 1;
+        // globalling
+        window.searchContent = searchContent;
+        window.searchContentTopAsset = searchContentTopAsset;
+        window.currentCurrency = currentCurrency;
+        // Replace following lines of code when real data is available
+        window.chartValues = []
+        for (var index = 0; index < 200; index++) {
+            window.chartValues.push(Math.round(Math.random() * Math.random() * Math.random() * 1 * 100) / 100);
+        };
+        window.chartData = {
+            labels: [],
+            series: [window.chartValues]
+        };
+        // End of replacement
+        window.chartDataOptions = {
+            width: $(window).width() * 0.2 + 900,
+            height: $(window).height() * 0.4 + 100,
+            showPoint: false,   
+            axisY: {showLabel: false, showGrid: false},
+            showArea: true,
+            chartPadding: {
+                top: $(window).height() * 0.1,
+                right: 0,
+                bottom: 0,
+                left: $(window).width() * 0.05
+            },
+        };
+        window.assetChart = new Chartist.Line(".ct-chart", window.chartData, window.chartDataOptions);
+        setTimeout(function() {
+            $(".ct-chart-line").css({
+                width: "calc(20vw + 1000px)"
+            });
+            mouseMove();
+        }, 150);
+        setTimeout(function() {
+            if (window.searchContent == 1 || window.searchContentTopAsset == 1) {
+                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                    stroke: "#20BF55"
+                });
+                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                    fill: "url(#MyGradient2)"
+                });
+            } else if (window.searchContent == 2 || window.searchContentTopAsset == 2) {
+                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                    stroke: "#eaee00"
+                });
+                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                    fill: "url(#MyGradient3)"
+                });
+            } else {
+                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                    stroke: "#01BAEF"
+                });
+                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                    fill: "url(#MyGradient1)"
+                });
+            };
+            $("#assetOverlayCostPrice").val(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+            $("#assetOverlayAssetPrice").html(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+        }, 0);
+    };
+};
+
 function showAssetOverlay(shortAssetName, longAssetName) {
     $("#assetOverlayFilter").animate({
         marginTop: "-8px"
@@ -413,41 +489,12 @@ function showAssetOverlay(shortAssetName, longAssetName) {
     }, 400);
     assetOverlayEnabled = 1;
     $("#assetOverlayAssetName").html(shortAssetName + " | " + longAssetName);
-    chartValues = []
-    for (var index = 0; index < 200; index++) {
-        chartValues.push(Math.round(Math.random() * Math.random() * Math.random() * 1 * 100) / 100);
-    };
-    // Replace following lines of code when real data is available
-    chartData = {
-        labels: [],
-        series: [chartValues]
-    };
-    // End of replacement
-    chartDataOptions = {
-        width: $(window).width() * 0.2 + 900,
-        height: $(window).height() * 0.4 + 100,
-        showPoint: false,   
-        axisY: {showLabel: false, showGrid: false},
-        showArea: true,
-        chartPadding: {
-            top: $(window).height() * 0.1,
-            right: 0,
-            bottom: 0,
-            left: $(window).width() * 0.05
-        },
-    };
-    assetChart = new Chartist.Line(".ct-chart", chartData, chartDataOptions);
-    setTimeout(function() {
-        $(".ct-chart-line").css({
-            width: "calc(20vw + 1000px)"
-        });
-        mouseMove();
-    }, 150)
+    showAssetOverlayPart2(shortAssetName);
 };
 
 function costCalculatorCalculate() {
     if (isNaN($("#assetOverlayCostQuantity").val()) == false && $("#assetOverlayCostQuantity").val().length > 0) {
-        $("#assetOverlayCostQuantityLabel3").html("Total Cost - " + currentCurrency + parseFloat($("#assetOverlayCostQuantity").val()) * chartValues[chartValues.length - 1]);
+        $("#assetOverlayCostQuantityLabel3").html("Total Cost - " + currentCurrency + parseFloat($("#assetOverlayCostQuantity").val()) * window.chartValues[window.chartValues.length - 1]);
     } else {
         $("#assetOverlayCostQuantityLabel3").html("");
     };
@@ -455,8 +502,8 @@ function costCalculatorCalculate() {
 
 function profitCalculatorCalculate() {
     if (isNaN($("#assetOverlayProfitQuantity").val()) == false && $("#assetOverlayProfitQuantity").val().length > 0 && isNaN($("#assetOverlayProfitCost").val()) == false && $("#assetOverlayProfitCost").val().length > 0 && $("#assetOverlayProfitCurrency").val().length == 3 && $("#assetOverlayProfitDate").val().length == 10 && $("#assetOverlayProfitDate").val().split("/").join("").length == 8 && supportedCurrencies.includes($("#assetOverlayProfitCurrency").val().toUpperCase())) {
-        var valueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * chartValues[chartValues.length - 1]) - parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * $("#assetOverlayProfitCost").val())) * 100) / 100
-        var percentageChange = Math.round((valueChange / $("#assetOverlayProfitQuantity").val()) / chartValues[chartValues.length - 1] * 10000) / 100;
+        var valueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * window.chartValues[window.chartValues.length - 1]) - parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * $("#assetOverlayProfitCost").val())) * 100) / 100
+        var percentageChange = Math.round((valueChange / $("#assetOverlayProfitQuantity").val()) / window.chartValues[window.chartValues.length - 1] * 10000) / 100;
         if (currentCurrency == $("#assetOverlayProfitCurrency").val().toUpperCase()) {
             if (valueChange > 0) {
                 $("#assetOverlayProfitQuantityLabel5").html("Profit +" + currentCurrency + valueChange + " (+" + percentageChange + "%)");
@@ -475,27 +522,36 @@ function profitCalculatorCalculate() {
                 }, 100);
             };
         } else {
+            var dateWritten = $("#assetOverlayProfitDate").val().split("/");
+            dateWritten = dateWritten[2] + "-" + dateWritten[1] + "-" + dateWritten[0]
+            // console.log(dateWritten);
+            if (currentCurrency == "BTC" || currentCurrency == "ETH") {
+                var type = 3;
+            } else {
+                type = 2;
+            };
+            getExchangeRate(dateWritten, $("#assetOverlayProfitCurrency").val(), currentCurrency, type, getApiKeyIndex(), valueChange, percentageChange, currentCurrency);
             // get forex exchange rate once available & change the following lines of code
             var exchangeRate = 1
             // end of change
-            var finalLocalValueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * chartValues[chartValues.length - 1]) - parseFloat($("#assetOverlayProfitQuantity").val()) * exchangeRate * $("#assetOverlayProfitCost").val()) * 100) / 100
-            var percentageChangeLocal = Math.round((finalLocalValueChange / $("#assetOverlayProfitQuantity").val()) / chartValues[chartValues.length - 1] * 10000) / 100;
-            if (valueChange > 0) {
-                $("#assetOverlayProfitQuantityLabel5").html("Profit +" + currentCurrency + valueChange + " (+" + percentageChange + "%) / +" + $("#assetOverlayProfitCurrency").val().toUpperCase() + finalLocalValueChange + " (+" + percentageChangeLocal + "%)");
-                $("#assetOverlayProfitQuantityLabel5").stop().animate({
-                    color: iconColours[1]
-                }, 100);
-            } else if (valueChange < 0) {
-                $("#assetOverlayProfitQuantityLabel5").html("Profit -" + currentCurrency + Math.abs(valueChange) + " (" + percentageChange + "%) / -" + $("#assetOverlayProfitCurrency").val().toUpperCase() + Math.abs(finalLocalValueChange) + " (" + percentageChangeLocal + "%)");
-                $("#assetOverlayProfitQuantityLabel5").stop().animate({
-                    color: "red"
-                }, 100);
-            } else {
-                $("#assetOverlayProfitQuantityLabel5").html("Profit " + currentCurrency + "0 (0%) / " + $("#assetOverlayProfitCurrency").val().toUpperCase() + "0 (0%)");
-                $("#assetOverlayProfitQuantityLabel5").stop().animate({
-                    color: "#757575"
-                }, 100);
-            };
+            // var finalLocalValueChange = Math.round((parseFloat(parseFloat($("#assetOverlayProfitQuantity").val()) * window.chartValues[window.chartValues.length - 1]) - parseFloat($("#assetOverlayProfitQuantity").val()) * exchangeRate * $("#assetOverlayProfitCost").val()) * 100) / 100
+            // var percentageChangeLocal = Math.round((finalLocalValueChange / $("#assetOverlayProfitQuantity").val()) / window.chartValues[window.chartValues.length - 1] * 10000) / 100;
+            // if (valueChange > 0) {
+            //     $("#assetOverlayProfitQuantityLabel5").html("Profit +" + currentCurrency + valueChange + " (+" + percentageChange + "%) / +" + $("#assetOverlayProfitCurrency").val().toUpperCase() + finalLocalValueChange + " (+" + percentageChangeLocal + "%)");
+            //     $("#assetOverlayProfitQuantityLabel5").stop().animate({
+            //         color: iconColours[1]
+            //     }, 100);
+            // } else if (valueChange < 0) {
+            //     $("#assetOverlayProfitQuantityLabel5").html("Profit -" + currentCurrency + Math.abs(valueChange) + " (" + percentageChange + "%) / -" + $("#assetOverlayProfitCurrency").val().toUpperCase() + Math.abs(finalLocalValueChange) + " (" + percentageChangeLocal + "%)");
+            //     $("#assetOverlayProfitQuantityLabel5").stop().animate({
+            //         color: "red"
+            //     }, 100);
+            // } else {
+            //     $("#assetOverlayProfitQuantityLabel5").html("Profit " + currentCurrency + "0 (0%) / " + $("#assetOverlayProfitCurrency").val().toUpperCase() + "0 (0%)");
+            //     $("#assetOverlayProfitQuantityLabel5").stop().animate({
+            //         color: "#757575"
+            //     }, 100);
+            // };
 
         };
     } else {
@@ -512,7 +568,7 @@ var currencyChangeClicked = 0; // index of supportedCurrencies
 var supportedCurrencies = ["USD", "SGD", "EUR", "JPY", "CNY", "GBP", "CAD", "INR", "BTC", "ETH"];
 var currentCurrency = "USD";
 var assetOverlayEnabled = false;
-var assetOverlayRange = 2; // default as DAY
+var assetOverlayRange = 5; // default as DAY
 var assetOverlayRangeCalculator = 2; // default as COST
 var assetOverlayRangeOptions = {
     "HOUR": 1, 
@@ -522,15 +578,16 @@ var assetOverlayRangeOptions = {
     "YEAR": 5, 
     "ALL": 6
 };
-var assetChart;
-var chartData;
-var chartDataOptions;
+window.assetChart;
+window.chartData;
+window.chartDataOptions;
 var currentOverlayAsset; // what is being showed
 var iconColours = ["#01BAEF", "#20BF55", "#eaee00"];
 var apiKeys = ["LL9OYIHQJD5XMNE1", "JF7Z9QHP1U2JD76S", "TVFNWRYCJ1S8ZIU6", "4RWXX1WJ5GKA7FQ2", "F70TY6F2A0VSNQSG", "GRLI8I9OM49REPHF", "BR15F1IL8U7DA6YF", "9UATAN950FMHV839", "IN9RN77V4QB1SEQZ", "EXYSUMI564KT2RTT", "Y3314J35NB35A3KB", "QX5E2BW31O2KWQBI", "2FD1MUZPUS37BW19", "SSH7H4CRQYF83GBC", "J611ZW8X7UARIF5B", "Q9Q1V765H036J5AJ", "HJSDLRBBL3BEAC38", "NIEXXV2W7T4XAKSM", "0WFT025L3S3F98EP", "QB13EO7ISS1KQWEM", "9YSF29J5YQKRBUKE", "M38XUX9TC3HP3PWO", "451N79J8ZHNQY8F5", "QT534D7MKXVKF94T"]
-var apiKeyIndex = -1;
+var apiKeyIndex = Math.round(Math.random * 24) - 1;
 var topAssetsPriceClick = 0;
 itemPriceClick = 0;
+var randomOrNot = 0;
 
 function mainCode() {
     if (searchContent == 0) {
@@ -636,14 +693,15 @@ function mainCode() {
             };
             searchCurrency1Click();
             currentCurrency = supportedCurrenciesTemp[0];
-            if (typeof chartValues !== 'undefined') {
-                $("#assetOverlayCostPrice").val(currentCurrency + chartValues[chartValues.length - 1]);
+            if (typeof window.chartValues !== 'undefined') {
+                $("#assetOverlayCostPrice").val(currentCurrency + window.chartValues[window.chartValues.length - 1]);
             };
             $(".topAssetsPrice").html("Fetch Price");
             $(".topAssetsPrice").animate({
                 "color": "#FFFFFF"
             }, 200);
             searchBarSearch(searchContent, 1);
+            showAssetOverlayPart2($("#assetOverlayAssetName").html().split(" ")[0]);
             mainCode();
         } else if ($(this).attr("id") != "searchCurrencyList1" && assetOverlayEnabled == 1) {
             hideAssetOverlay();
@@ -659,7 +717,9 @@ function mainCode() {
                 fontWeight: "normal",
                 color: "#B4B4B4"
             });
+            // console.log($(this).parent().siblings("#assetOverlayAssetName").html().split(" ")[0]);
             assetOverlayRange = assetOverlayRangeOptions[$(this).html()];
+            showAssetOverlayPart2($(this).parent().siblings("#assetOverlayAssetName").html().split(" ")[0]);
             $(this).css({
                 fontWeight: "bold",
                 color: "#FBFBFF"
@@ -705,7 +765,7 @@ function mainCode() {
     })
     $(window).resize(function() {
         setTimeout(function() {
-            chartDataOptions = {
+            window.chartDataOptions = {
                 width: $(window).width() * 0.2 + 900,
                 height: $(window).height() * 0.4 + 100,
                 showPoint: false,   
@@ -718,8 +778,8 @@ function mainCode() {
                     left: $(window).width() * 0.05
                 },
             };
-            if (typeof chartValues !== 'undefined') {
-                assetChart.update(chartData, chartDataOptions);
+            if (typeof window.chartValues !== 'undefined') {
+                window.assetChart.update(window.chartData, window.chartDataOptions);
             };
             if (searchContent == 1 || searchContentTopAsset == 1) {
                 $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
@@ -819,10 +879,15 @@ function mouseMove() {
                     });
                     $("#chartHighlighterPrice").css({
                         color: iconColours[tempSearchContent],
-                        marginLeft: lineX - 37.5,
+                        marginLeft: lineX - 100,
                         marginTop: $("svg").find("line")[0]["y2"]["baseVal"]["value"] + 10
                     });
-                    $("#chartHighlighterPrice").html("$" + chartValues[closestIndex]);
+                    // console.log(closestIndex, window.DateOutput);
+                    if (randomOrNot == 1) {
+                        $("#chartHighlighterPrice").html(currentCurrency + window.chartValues[closestIndex]);
+                    } else {
+                        $("#chartHighlighterPrice").html(currentCurrency + window.chartValues[closestIndex] + " (" + window.DateOutput[window.DateOutput.length - closestIndex - 1] + ")");
+                    };
                 };
             };
         };
@@ -864,7 +929,7 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                     } else{
                         change = 0;
                     }
-                    window.output = [Math.round(price * 1000) / 1000, change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                    window.output = [Math.round(price * 100000) / 100000, change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
                     if (currentObject == -1) {
                         // $(".dropdownAppender").append(
                         //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
@@ -920,7 +985,7 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                         data1 = $.getJSON("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency="+currency+"&apikey="+api, function(json) {}).done(function(data1) {
                             var effective_price;
                             effective_price = raw*data1["Realtime Currency Exchange Rate"]["5. Exchange Rate"]
-                            window.output = [Math.round(effective_price * 1000) / 1000, effective_change]; // **************OUTPUT**************** NOTE: effective_change(1 => Positive change, 0=> Negative change)
+                            window.output = [Math.round(effective_price * 100000) / 100000, effective_change]; // **************OUTPUT**************** NOTE: effective_change(1 => Positive change, 0=> Negative change)
                             if (currentObject == -1) {
                                 // $(".dropdownAppender").append(
                                 //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
@@ -1002,7 +1067,7 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                     // console.log(window.displayableList[window.searchContent])
                     // console.log(window.displayableList[window.searchContent][window.AssetName[data["Meta Data"]["3. To Symbol"]]])
                     // console.log(data["Meta Data"]["3. To Symbol"])
-                    window.output = [Math.round(Math.pow(rate,-1) * 1000) / 1000, change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                    window.output = [Math.round(Math.pow(rate,-1) * 100000) / 100000, change]; // **************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
                     if (currentObject == -1) {
                         // $(".dropdownAppender").append(
                         //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
@@ -1060,7 +1125,7 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                                     } else{
                                         change = 0;
                                     };
-                                    window.output = [Math.round(Math.pow(pricey,-1) * 1000) / 1000, change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                                    window.output = [Math.round(Math.pow(pricey,-1) * 100000) / 100000, change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
                                     if (currentObject == -1) {
                                         // $(".dropdownAppender").append(
                                         //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
@@ -1129,7 +1194,7 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
                                     } else {
                                         change = 0;
                                     };
-                                    window.output = [Math.round(priceNow * 1000) / 1000, change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
+                                    window.output = [Math.round(priceNow * 100000) / 100000, change]; //**************OUTPUT**************** NOTE: change(1 => Positive change, 0=> Negative change)
                                     if (currentObject == -1) {
                                         // $(".dropdownAppender").append(
                                         //     "<div class = 'dropdownElementMaster' id = 'dropdownElementMaster'>"
@@ -1180,6 +1245,691 @@ function CurrentAssetPrice(AssetName, Type, BaseCurrency, apiKey, i, displayable
     };
     // console.log(i, displayableList, searchContent);
     var y = retrieve(link, i, displayableList, searchContent);
+}
+
+function getExchangeRate(time, asset, baseCurrency, type, apiKey, valueChange, percentageChange, currentCurrency) { // asset is purchase currency, basecurrency is selected currency on top right, type is type of selected
+    window.time = time;
+    window.baseCurrency = baseCurrency;
+    window.asset = asset;
+    window.chartValues = chartValues
+    window.valueChange = valueChange;
+    window.percentageChange = percentageChange;
+    window.currentCurrency = currentCurrency;
+    if (type == 2) {
+        // console.log("b");
+        if (asset.toUpperCase() != "BTC" && asset.toUpperCase() != "ETH") {
+            // console.log("cs");
+            jQuery.when(
+                json = $.getJSON("https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=" + asset.toUpperCase() + "&to_symbol=" + baseCurrency.toUpperCase() + "&outputsize=full&apikey=" + apiKey, function(json) {}).done(function(json) {
+                    var errorCaught = 0;
+                    try {
+                        window.exchangeRateData = json["Time Series FX (Daily)"][window.time]["4. close"];
+                    } catch (TypeError) {
+                        errorCaught = 1;
+                        return;
+                    }
+                    // OUTPUT HERE
+                    // console.log(window.exchangeRateData);
+                    var finalLocalValueChange = Math.round($("#assetOverlayProfitQuantity").val() * (window.chartValues[window.chartValues.length - 1] / window.exchangeRateData - $("#assetOverlayProfitCost").val()) * 100) / 100
+                    var percentageChangeLocal = Math.round(((window.chartValues[window.chartValues.length - 1] / window.exchangeRateData - $("#assetOverlayProfitCost").val()) / $("#assetOverlayProfitCost").val()) * 10000) / 100;
+                    window.valueChange = Math.round(($("#assetOverlayProfitQuantity").val() * (window.chartValues[window.chartValues.length - 1] - $("#assetOverlayProfitCost").val() * window.exchangeRateData)) * 100) / 100
+                    if (window.valueChange > 0) {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit +" + window.currentCurrency + window.valueChange + " (+" + window.percentageChange + "%) / +" + $("#assetOverlayProfitCurrency").val().toUpperCase() + finalLocalValueChange + " (+" + percentageChangeLocal + "%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: iconColours[1]
+                        }, 100);
+                    } else if (window.valueChange < 0) {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit -" + window.currentCurrency + Math.abs(window.valueChange) + " (" + window.percentageChange + "%) / -" + $("#assetOverlayProfitCurrency").val().toUpperCase() + Math.abs(finalLocalValueChange) + " (" + percentageChangeLocal + "%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: "red"
+                        }, 100);
+                    } else {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit " + window.currentCurrency + "0 (0%) / " + $("#assetOverlayProfitCurrency").val().toUpperCase() + "0 (0%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: "#757575"
+                        }, 100);
+                    };
+            }));
+        } else {
+            // console.log("a");
+            jQuery.when(
+                json = $.getJSON("https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=" + asset.toUpperCase() + "&market=" + baseCurrency.toUpperCase() + "&outputsize=full&apikey=" + apiKey, function(json) {}).done(function(json) {
+                    var errorCaught = 0;
+                    // console.log(json);
+                    try {
+                        window.exchangeRateData = json["Time Series (Digital Currency Daily)"][window.time]["4a. close (" + window.baseCurrency + ")"];
+                    } catch (TypeError) {
+                        errorCaught = 1;
+                        return;
+                    }
+                    // OUTPUT HERE
+                    // console.log(window.exchangeRateData);
+                    var finalLocalValueChange = Math.round($("#assetOverlayProfitQuantity").val() * (window.chartValues[window.chartValues.length - 1] / window.exchangeRateData - $("#assetOverlayProfitCost").val()) * 100) / 100
+                    var percentageChangeLocal = Math.round(((window.chartValues[window.chartValues.length - 1] / window.exchangeRateData - $("#assetOverlayProfitCost").val()) / $("#assetOverlayProfitCost").val()) * 10000) / 100;
+                    window.valueChange = Math.round(($("#assetOverlayProfitQuantity").val() * (window.chartValues[window.chartValues.length - 1] - $("#assetOverlayProfitCost").val() * window.exchangeRateData)) * 100) / 100
+                    if (window.valueChange > 0) {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit +" + window.currentCurrency + window.valueChange + " (+" + window.percentageChange + "%) / +" + $("#assetOverlayProfitCurrency").val().toUpperCase() + finalLocalValueChange + " (+" + percentageChangeLocal + "%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: iconColours[1]
+                        }, 100);
+                    } else if (window.valueChange < 0) {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit -" + window.currentCurrency + Math.abs(window.valueChange) + " (" + window.percentageChange + "%) / -" + $("#assetOverlayProfitCurrency").val().toUpperCase() + Math.abs(finalLocalValueChange) + " (" + percentageChangeLocal + "%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: "red"
+                        }, 100);
+                    } else {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit " + window.currentCurrency + "0 (0%) / " + $("#assetOverlayProfitCurrency").val().toUpperCase() + "0 (0%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: "#757575"
+                        }, 100);
+                    };
+            }));
+        };
+    } else {
+        // console.log("d");
+        x = asset;
+        asset = baseCurrency;
+        baseCurrency = x;
+        if (baseCurrency.toUpperCase() != "BTC" && baseCurrency.toUpperCase() != "ETH") {
+            // console.log("a");
+            jQuery.when(
+                json = $.getJSON("https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=" + asset.toUpperCase() + "&market=" + baseCurrency.toUpperCase() + "&outputsize=full&apikey=" + apiKey, function(json) {}).done(function(json) {
+                    var errorCaught = 0;
+                    // console.log(json);
+                    try {
+                        window.exchangeRateData = Math.round(10000 / parseFloat(json["Time Series (Digital Currency Daily)"][window.time]["4a. close (" + window.asset + ")"])) / 10000;
+                    } catch (TypeError) {
+                        errorCaught = 1;
+                        return;
+                    }
+                    // OUTPUT HERE
+                    // console.log(window.exchangeRateData);
+                    var finalLocalValueChange = Math.round($("#assetOverlayProfitQuantity").val() * (window.chartValues[window.chartValues.length - 1] / window.exchangeRateData - $("#assetOverlayProfitCost").val()) * 100) / 100
+                    var percentageChangeLocal = Math.round(((window.chartValues[window.chartValues.length - 1] / window.exchangeRateData - $("#assetOverlayProfitCost").val()) / $("#assetOverlayProfitCost").val()) * 10000) / 100;
+                    window.valueChange = Math.round(($("#assetOverlayProfitQuantity").val() * (window.chartValues[window.chartValues.length - 1] - $("#assetOverlayProfitCost").val() * window.exchangeRateData)) * 100) / 100
+                    if (window.valueChange > 0) {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit +" + window.currentCurrency + window.valueChange + " (+" + window.percentageChange + "%) / +" + $("#assetOverlayProfitCurrency").val().toUpperCase() + finalLocalValueChange + " (+" + percentageChangeLocal + "%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: iconColours[1]
+                        }, 100);
+                    } else if (window.valueChange < 0) {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit -" + window.currentCurrency + Math.abs(window.valueChange) + " (" + window.percentageChange + "%) / -" + $("#assetOverlayProfitCurrency").val().toUpperCase() + Math.abs(finalLocalValueChange) + " (" + percentageChangeLocal + "%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: "red"
+                        }, 100);
+                    } else {
+                        $("#assetOverlayProfitQuantityLabel5").html("Profit " + window.currentCurrency + "0 (0%) / " + $("#assetOverlayProfitCurrency").val().toUpperCase() + "0 (0%)");
+                        $("#assetOverlayProfitQuantityLabel5").stop().animate({
+                            color: "#757575"
+                        }, 100);
+                    };
+            }));
+        } else {
+            return;
+        };
+    };
+};
+
+function GraphPrice(AssetName, Type, BaseCurrency, range, apiKey, searchContent, searchContentTopAsset, currentCurrency) {
+    // console.log(AssetName, Type, BaseCurrency, range, apiKey, searchContent, searchContentTopAsset, currentCurrency);
+    window.searchContent = searchContent;
+    window.searchContentTopAsset = searchContentTopAsset;
+    window.currentCurrency = currentCurrency;
+    window.chartValues = [];
+    function epochtoUNIX(epoch){
+        return(new Date(epoch * 1000).toISOString().replace('T', ' ').replace('.000Z', ''))
+    };
+    function UNIXtoepoch(unix){
+        return(new Date(unix.replace(' ', 'T') + '.000Z').getTime())
+    };
+    window.asset = AssetName; window.Currency = BaseCurrency; window.Range = range; window.API = apiKey;
+    window.PriceOutput = [];
+    window.DateOutput = [];
+    window.nowDate = new Date();
+    window.EpochTime = 0; 
+    window.StartEpochTime = 0;
+    window.TimeStamp = 0;
+    if(Range == 0){TimeStamp=60;} else if (Range == 1) {StartEpochTime = EpochTime - 86400;TimeStamp=300;} else if (Range == 2) {StartEpochTime = EpochTime - 604800;TimeStamp=86400;} else if (Range == 3) {StartEpochTime = EpochTime - 2592000;TimeStamp=86400;} else if (Range == 4) {StartEpochTime = EpochTime - 31536000;TimeStamp=86400;};        
+    // console.log(Range);
+    if (Range == 0 || Range == 1){
+        // console.log("1");
+        if (Type == 1 && Currency == "USD"){
+            jQuery.when(
+                data = $.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+asset+"&interval="+String(TimeStamp/60)+"min&apikey="+API, function(json) {}).done(function(data) {
+                    EpochTime = (UNIXtoepoch(data["Meta Data"]["3. Last Refreshed"]))/1000;
+                    if (Range == 0) {
+                        StartEpochTime = EpochTime - 3600;
+                    } else {
+                        StartEpochTime = EpochTime - 86400;
+                    }
+                    while ((EpochTime != StartEpochTime)&&((Range == 1 && epochtoUNIX(EpochTime)|| (Range == 0)) != "2020-01-17 09:35:00")){ // GO TO OJAS AND CHECK **********************************************OMG
+                        DateOutput.push(epochtoUNIX(EpochTime));
+                        PriceOutput.push(Math.round(data["Time Series ("+String(TimeStamp/60)+"min)"][epochtoUNIX(EpochTime)]["1. open"] * 100) / 100);
+                        EpochTime = EpochTime - TimeStamp;
+                        var output = [PriceOutput,DateOutput]; ////**************OUTPUT**************** [This is fuckery at a whole new level]
+                        window.chartValues = [...PriceOutput]
+                        // console.log(window.chartValues)
+                        window.chartData = {
+                            labels: [],
+                            series: [window.chartValues]
+                        };
+                        // End of replacement
+                        window.chartDataOptions = {
+                            width: $(window).width() * 0.2 + 900,
+                            height: $(window).height() * 0.4 + 100,
+                            showPoint: false,   
+                            axisY: {showLabel: false, showGrid: false},
+                            showArea: true,
+                            chartPadding: {
+                                top: $(window).height() * 0.1,
+                                right: 0,
+                                bottom: 0,
+                                left: $(window).width() * 0.05
+                            },
+                        };
+                        window.assetChart = new Chartist.Line(".ct-chart", window.chartData, window.chartDataOptions);
+                        setTimeout(function() {
+                            $(".ct-chart-line").css({
+                                width: "calc(20vw + 1000px)"
+                            });
+                            mouseMove();
+                        }, 150);
+                        setTimeout(function() {
+                            if (window.searchContent == 1 || window.searchContentTopAsset == 1) {
+                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                    stroke: "#20BF55"
+                                });
+                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                    fill: "url(#MyGradient2)"
+                                });
+                            } else if (window.searchContent == 2 || window.searchContentTopAsset == 2) {
+                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                    stroke: "#eaee00"
+                                });
+                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                    fill: "url(#MyGradient3)"
+                                });
+                            } else {
+                                $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                    stroke: "#01BAEF"
+                                });
+                                $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                    fill: "url(#MyGradient1)"
+                                });
+                            };
+                            $("#assetOverlayCostPrice").val(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                            $("#assetOverlayAssetPrice").html(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                        }, 0);
+                        // console.log("end")
+                    }
+                    //console.log(output);
+                })
+            );
+        } else if (Type == 1 && (false == ['BTC','ETH'].includes(Currency)) && Currency != "USD"){
+            jQuery.when(
+                data = $.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+asset+"&interval="+String(TimeStamp/60)+"min&apikey="+API, function(json) {}).done(function(data) {
+                    EpochTime = (UNIXtoepoch(data["Meta Data"]["3. Last Refreshed"]))/1000;
+                    if (Range == 0) {
+                        StartEpochTime = EpochTime - 3600;
+                    } else {
+                        StartEpochTime = EpochTime - 86400;
+                    };
+                    while ((EpochTime != StartEpochTime)&&((Range == 1 && epochtoUNIX(EpochTime)|| (Range == 0)) != "2020-01-17 09:35:00")){ // GO TO OJAS AND CHECK **********************************************OMG
+                        DateOutput.push(epochtoUNIX(EpochTime));
+                        PriceOutput.push(data["Time Series ("+String(TimeStamp/60)+"min)"][epochtoUNIX(EpochTime)]["1. open"]);
+                        EpochTime = EpochTime - TimeStamp;
+                    };
+                    jQuery.when(
+                        data1 = $.getJSON("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency="+Currency+"&apikey="+API, function(json) {}).done(function(data1) {
+                            var a = PriceOutput.map(function(x) { return Math.round(x * data1["Realtime Currency Exchange Rate"]["5. Exchange Rate"] * 100) / 100; });
+                            var output = [a,DateOutput]; ////**************OUTPUT**************** [This is fuckery at a whole new level]
+                            // console.log(output);
+                            window.chartValues = [...a]
+                            window.chartData = {
+                                labels: [],
+                                series: [window.chartValues]
+                            };
+                            // End of replacement
+                            window.chartDataOptions = {
+                                width: $(window).width() * 0.2 + 900,
+                                height: $(window).height() * 0.4 + 100,
+                                showPoint: false,   
+                                axisY: {showLabel: false, showGrid: false},
+                                showArea: true,
+                                chartPadding: {
+                                    top: $(window).height() * 0.1,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: $(window).width() * 0.05
+                                },
+                            };
+                            window.assetChart = new Chartist.Line(".ct-chart", window.chartData, window.chartDataOptions);
+                            setTimeout(function() {
+                                $(".ct-chart-line").css({
+                                    width: "calc(20vw + 1000px)"
+                                });
+                                mouseMove();
+                            }, 150);
+                            setTimeout(function() {
+                                if (window.searchContent == 1 || window.searchContentTopAsset == 1) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#20BF55"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient2)"
+                                    });
+                                } else if (window.searchContent == 2 || window.searchContentTopAsset == 2) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#eaee00"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient3)"
+                                    });
+                                } else {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#01BAEF"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient1)"
+                                    });
+                                };
+                                $("#assetOverlayCostPrice").val(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                                $("#assetOverlayAssetPrice").html(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                            }, 0);
+                        })
+                    );
+                })
+            );
+        } else if (Type == 1 && ['BTC','ETH'].includes(Currency)){
+            jQuery.when(
+                data = $.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol="+asset+"&interval="+String(TimeStamp/60)+"min&apikey="+API, function(json) {}).done(function(data) {
+                    EpochTime = (UNIXtoepoch(data["Meta Data"]["3. Last Refreshed"]))/1000;
+                    if (Range == 0) {
+                        StartEpochTime = EpochTime - 3600;
+                    } else {
+                        StartEpochTime = EpochTime - 86400;
+                    };
+                    while ((EpochTime != StartEpochTime)&&((Range == 1 && epochtoUNIX(EpochTime)|| (Range == 0)) != "2020-01-17 09:35:00")){ // GO TO OJAS AND CHECK **********************************************OMG
+                        DateOutput.push(epochtoUNIX(EpochTime));
+                        PriceOutput.push(data["Time Series ("+String(TimeStamp/60)+"min)"][epochtoUNIX(EpochTime)]["1. open"]);
+                        EpochTime = EpochTime - TimeStamp;
+                    };
+                    if (Range == 0) {
+                        EpochTime = StartEpochTime + 3600;
+                    } else {
+                        EpochTime = StartEpochTime + 86400;
+                    };
+                    window.choice = ""
+                    if (Currency == "BTC") {choice = "bitcoin";} else {choice = "ethereum";};
+                    x = epochtoUNIX(StartEpochTime).slice(0, 10).split("-")
+                    window.datey = String(x[2]+"-"+x[1]+"-"+x[0]);
+                    jQuery.when(
+                        data1 = $.getJSON("https://api.coingecko.com/api/v3/coins/bitcoin/history?date="+datey, function(json) {}).done(function(data1) {
+                            count = 0;
+                            while (StartEpochTime != EpochTime){
+                                PriceOutput[count] = Math.round(PriceOutput[count]/(data1["market_data"]["current_price"]["usd"]) * 100) / 100;
+                                StartEpochTime = StartEpochTime + TimeStamp;
+                                count = count + 1;
+                            }
+                            
+                            var output = [PriceOutput, DateOutput]; ////**************OUTPUT**************** [This is fuckery at a whole new level]
+                            //console.log(output);
+                            window.chartValues = [...PriceOutput]
+                            window.chartData = {
+                                labels: [],
+                                series: [window.chartValues]
+                            };
+                            // End of replacement
+                            window.chartDataOptions = {
+                                width: $(window).width() * 0.2 + 900,
+                                height: $(window).height() * 0.4 + 100,
+                                showPoint: false,   
+                                axisY: {showLabel: false, showGrid: false},
+                                showArea: true,
+                                chartPadding: {
+                                    top: $(window).height() * 0.1,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: $(window).width() * 0.05
+                                },
+                            };
+                            window.assetChart = new Chartist.Line(".ct-chart", window.chartData, window.chartDataOptions);
+                            setTimeout(function() {
+                                $(".ct-chart-line").css({
+                                    width: "calc(20vw + 1000px)"
+                                });
+                                mouseMove();
+                            }, 150);
+                            setTimeout(function() {
+                                if (window.searchContent == 1 || window.searchContentTopAsset == 1) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#20BF55"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient2)"
+                                    });
+                                } else if (window.searchContent == 2 || window.searchContentTopAsset == 2) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#eaee00"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient3)"
+                                    });
+                                } else {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#01BAEF"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient1)"
+                                    });
+                                };
+                                $("#assetOverlayCostPrice").val(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                                $("#assetOverlayAssetPrice").html(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                            }, 0);
+                        
+                        }) 
+                    );
+                })
+            );
+        } 
+    } else if(Range == 2 || Range == 3 || Range==4){
+        if (Type == 1 && Currency == "USD"){
+            jQuery.when(
+                data5 = $.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+asset+"&outputsize=full&apikey="+API, function(json) {}).done(function(data5) {
+                    EpochTime = (UNIXtoepoch(String(data5["Meta Data"]["3. Last Refreshed"])+" 00:00:00"))/1000;
+                    dateyy = epochtoUNIX(StartEpochTime);
+                    if(Range == 0){TimeStamp=60;} else if (Range == 1) {StartEpochTime = EpochTime - 86400;TimeStamp=300;} else if (Range == 2) {StartEpochTime = EpochTime - 604800;TimeStamp=86400;} else if (Range == 3) {StartEpochTime = EpochTime - 2592000;TimeStamp=86400;} else if (Range == 4) {StartEpochTime = EpochTime - 31536000;TimeStamp=86400;};        
+                    for (i in data5["Time Series (Daily)"]){
+                        // console.log(i, epochtoUNIX(StartEpochTime));
+                        if (String(i) == String(epochtoUNIX(StartEpochTime)).substr(0, 10)){
+                            break;
+                        };
+                        DateOutput.push(i);
+                        PriceOutput.push(Math.round(data5["Time Series (Daily)"][i]["4. close"] * 100) / 100);
+                    // console.log(PriceOutput);
+                    // PriceOutput.reverse();
+                    // DateOutput.reverse();
+                    var newPriceOutput = [];
+                    // for (i in PriceOutput) {
+                    //     newPriceOutput.push(PriceOutput[PriceOutput.length - i - 1]);
+                    // };
+                    // PriceOutput = newPriceOutput;
+                    // console.log(PriceOutput);
+                    // console.log(newPriceOutput);
+                    var output = [PriceOutput, DateOutput]; ////**************OUTPUT**************** [This is fuckery at a whole new level]
+                    window.chartValues = [...PriceOutput]
+                    window.chartData = {
+                        labels: [],
+                        series: [window.chartValues.reverse()]
+                    };
+                    // End of replacement
+                    window.chartDataOptions = {
+                        width: $(window).width() * 0.2 + 900,
+                        height: $(window).height() * 0.4 + 100,
+                        showPoint: false,   
+                        axisY: {showLabel: false, showGrid: false},
+                        showArea: true,
+                        chartPadding: {
+                            top: $(window).height() * 0.1,
+                            right: 0,
+                            bottom: 0,
+                            left: $(window).width() * 0.05
+                        },
+                    };
+                    window.assetChart = new Chartist.Line(".ct-chart", window.chartData, window.chartDataOptions);
+                    setTimeout(function() {
+                        $(".ct-chart-line").css({
+                            width: "calc(20vw + 1000px)"
+                        });
+                        mouseMove();
+                    }, 150);
+                    setTimeout(function() {
+                        if (window.searchContent == 1 || window.searchContentTopAsset == 1) {
+                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                stroke: "#20BF55"
+                            });
+                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                fill: "url(#MyGradient2)"
+                            });
+                        } else if (window.searchContent == 2 || window.searchContentTopAsset == 2) {
+                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                stroke: "#eaee00"
+                            });
+                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                fill: "url(#MyGradient3)"
+                            });
+                        } else {
+                            $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                stroke: "#01BAEF"
+                            });
+                            $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                fill: "url(#MyGradient1)"
+                            });
+                        };
+                        $("#assetOverlayCostPrice").val(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                        $("#assetOverlayAssetPrice").html(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                    }, 0);
+                    //console.log(output);
+                        
+                    };
+                })
+            ); 
+        } else if (Type == 1 && Currency != "USD" && (false == ['BTC','ETH'].includes(Currency))){
+            jQuery.when(
+                data5 = $.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+asset+"&outputsize=full&apikey="+API, function(json) {}).done(function(data5) {
+                    EpochTime = (UNIXtoepoch(String(data5["Meta Data"]["3. Last Refreshed"])+" 00:00:00"))/1000;
+                    dateyy = epochtoUNIX(StartEpochTime);
+                    if(Range == 0){TimeStamp=60;} else if (Range == 1) {StartEpochTime = EpochTime - 86400;TimeStamp=300;} else if (Range == 2) {StartEpochTime = EpochTime - 604800;TimeStamp=86400;} else if (Range == 3) {StartEpochTime = EpochTime - 2592000;TimeStamp=86400;} else if (Range == 4) {StartEpochTime = EpochTime - 31536000;TimeStamp=86400;};        
+                    for (i in data5["Time Series (Daily)"]){
+                        if (String(i) == String(epochtoUNIX(StartEpochTime)).substr(0, 10)){
+                            break;
+                        };
+                        DateOutput.push(i);
+                        PriceOutput.push(data5["Time Series (Daily)"][i]["4. close"]);
+                    };
+                    window.DateOutput = DateOutput;
+                    window.PriceOutput = PriceOutput;
+                    // console.log(DateOutput);
+                    // console.log(PriceOutput);
+                    jQuery.when(
+                        data6 = $.getJSON("https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=USD&to_symbol="+Currency+"&outputsize=full&apikey="+API, function(json) {}).done(function(data6) {
+                            EpochTime = (UNIXtoepoch(String(data6["Meta Data"]["5. Last Refreshed"]).substr(0, 10)+" 00:00:00"))/1000;
+                            dateyy = epochtoUNIX(StartEpochTime);
+                            if(Range == 0){TimeStamp=60;} else if (Range == 1) {StartEpochTime = EpochTime - 86400;TimeStamp=300;} else if (Range == 2) {StartEpochTime = EpochTime - 604800;TimeStamp=86400;} else if (Range == 3) {StartEpochTime = EpochTime - 2592000;TimeStamp=86400;} else if (Range == 4) {StartEpochTime = EpochTime - 31536000;TimeStamp=86400;};        
+                            var date = []; var price = []; var final = [];
+                            for (i in data6["Time Series FX (Daily)"]){
+                                // console.log(i);
+                                if (String(i) == String(epochtoUNIX(StartEpochTime)).substr(0, 10)){
+                                    break;
+                                };
+                                date.push(i);
+                                price.push(Math.round(data6["Time Series FX (Daily)"][i]["4. close"] * 100) / 100);
+                            }
+                            // console.log(date); 
+                            // console.log(price);
+                            var index = 0;
+                            var index2 = 0;
+                            var newDate = [];
+                            for (i in date) {
+                                // console.log(date[i], window.DateOutput[index])
+                                if (window.DateOutput[index] == date[i]) {
+                                    window.PriceOutput[index] = Math.round(price[index2] * window.PriceOutput[index] * 100) / 100;
+                                    newDate.push(date[index2]);
+                                    index++;
+                                };
+                                index2++;
+                            };
+                            window.PriceOutput.reverse();
+                            window.DateOutput.reverse();
+                            window.DateOutput = newDate.reverse();
+                            // console.log(window.DateOutput);
+                            // console.log(window.PriceOutput); 
+                            var output = [window.PriceOutput, newDate.reverse()]; ////**************OUTPUT**************** [This is fuckery at a whole new level]
+                            window.chartValues = [...window.PriceOutput]
+                            window.chartData = {
+                                labels: [],
+                                series: [window.chartValues]
+                            };
+                            // End of replacement
+                            window.chartDataOptions = {
+                                width: $(window).width() * 0.2 + 900,
+                                height: $(window).height() * 0.4 + 100,
+                                showPoint: false,   
+                                axisY: {showLabel: false, showGrid: false},
+                                showArea: true,
+                                chartPadding: {
+                                    top: $(window).height() * 0.1,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: $(window).width() * 0.05
+                                },
+                            };
+                            window.assetChart = new Chartist.Line(".ct-chart", window.chartData, window.chartDataOptions);
+                            setTimeout(function() {
+                                $(".ct-chart-line").css({
+                                    width: "calc(20vw + 1000px)"
+                                });
+                                mouseMove();
+                            }, 150);
+                            setTimeout(function() {
+                                if (window.searchContent == 1 || window.searchContentTopAsset == 1) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#20BF55"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient2)"
+                                    });
+                                } else if (window.searchContent == 2 || window.searchContentTopAsset == 2) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#eaee00"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient3)"
+                                    });
+                                } else {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#01BAEF"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient1)"
+                                    });
+                                };
+                                $("#assetOverlayCostPrice").val(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                                $("#assetOverlayAssetPrice").html(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                            }, 0);
+
+                        })
+                        
+                    );
+
+                })
+            );
+        } else {
+            jQuery.when(
+                data5 = $.getJSON("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+asset+"&outputsize=full&apikey="+API, function(json) {}).done(function(data5) {
+                    EpochTime = (UNIXtoepoch(String(data5["Meta Data"]["3. Last Refreshed"])+" 00:00:00"))/1000;
+                    dateyy = epochtoUNIX(StartEpochTime);
+                    if(Range == 0){TimeStamp=60;} else if (Range == 1) {StartEpochTime = EpochTime - 86400;TimeStamp=300;} else if (Range == 2) {StartEpochTime = EpochTime - 604800;TimeStamp=86400;} else if (Range == 3) {StartEpochTime = EpochTime - 2592000;TimeStamp=86400;} else if (Range == 4) {StartEpochTime = EpochTime - 31536000;TimeStamp=86400;};        
+                    for (i in data5["Time Series (Daily)"]){
+                        if (String(i) == String(epochtoUNIX(StartEpochTime)).substr(0, 10)){
+                            break;
+                        };
+                        DateOutput.push(i);
+                        PriceOutput.push(data5["Time Series (Daily)"][i]["4. close"]);
+                    };
+                    window.DateOutput = DateOutput;
+                    window.PriceOutput = PriceOutput;
+                    //console.log(DateOutput);
+                    //console.log(PriceOutput);
+                    jQuery.when(
+                        data7 = $.getJSON("https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol="+Currency+"&market=USD&apikey="+API, function(json) {}).done(function(data7) {
+                            EpochTime = (UNIXtoepoch(String(data7["Meta Data"]["6. Last Refreshed"]).substr(0, 10)+" 00:00:00"))/1000;
+                            dateyy = epochtoUNIX(StartEpochTime);
+                            var date = []; var price = []; var final = [];
+                            for (i in data7["Time Series (Digital Currency Daily)"]){
+                                // console.log(i);
+                                if (String(i) == String(epochtoUNIX(StartEpochTime)).substr(0, 10)){
+                                    break;
+                                };
+                                date.push(i);
+                                price.push(Math.round(data7["Time Series (Digital Currency Daily)"][i]["4b. close (USD)"] * 100) / 100);
+                            }
+                            //console.log(date); 
+                            //console.log(price);
+                            var index = 0;
+                            var index2 = 0;
+                            var newDate = [];
+                            for (i in date) {
+                                // console.log(date[i], window.DateOutput[index])
+                                if (window.DateOutput[index] == date[i]) {
+                                    window.PriceOutput[index] = Math.round(window.PriceOutput[index] / price[index2] * 100) / 100;
+                                    newDate.push(date[index2]);
+                                    index++;
+                                };
+                                index2++;
+                            };
+                            window.DateOutput = newDate.reverse();
+                            var output = [window.PriceOutput, newDate.reverse()]; ////**************OUTPUT**************** [This is fuckery at a whole new level]
+                            window.chartValues = [...window.PriceOutput]
+                            window.chartData = {
+                                labels: [],
+                                series: [window.chartValues]
+                            };
+                            // End of replacement
+                            window.chartDataOptions = {
+                                width: $(window).width() * 0.2 + 900,
+                                height: $(window).height() * 0.4 + 100,
+                                showPoint: false,   
+                                axisY: {showLabel: false, showGrid: false},
+                                showArea: true,
+                                chartPadding: {
+                                    top: $(window).height() * 0.1,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: $(window).width() * 0.05
+                                },
+                            };
+                            window.assetChart = new Chartist.Line(".ct-chart", window.chartData, window.chartDataOptions);
+                            setTimeout(function() {
+                                $(".ct-chart-line").css({
+                                    width: "calc(20vw + 1000px)"
+                                });
+                                mouseMove();
+                            }, 150);
+                            setTimeout(function() {
+                                if (window.searchContent == 1 || window.searchContentTopAsset == 1) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#20BF55"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient2)"
+                                    });
+                                } else if (window.searchContent == 2 || window.searchContentTopAsset == 2) {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#eaee00"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient3)"
+                                    });
+                                } else {
+                                    $(".ct-series-a .ct-line, .ct-series-a .ct-point").css({
+                                        stroke: "#01BAEF"
+                                    });
+                                    $(".ct-series-a .ct-area, .ct-series-b .ct-area").css({
+                                        fill: "url(#MyGradient1)"
+                                    });
+                                };
+                                $("#assetOverlayCostPrice").val(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                                $("#assetOverlayAssetPrice").html(window.currentCurrency + window.chartValues[window.chartValues.length - 1]);
+                            }, 0);
+                        })
+                        
+                    );
+
+                })
+            );
+        };
+    };
 }
 
 function getApiKeyIndex() {

@@ -355,8 +355,9 @@ body {
     font-family: 'Open Sans', sans-serif;
     text-align: right;
     font-weight: bold;
-    margin-left: calc(20vw + 886px);
+    margin-left: calc(20vw + 770px);
     position: absolute;
+    width: 200px;
 }
 
 #assetOverlayRange {
@@ -378,7 +379,7 @@ body {
     color: var(--searchBarHighlightColour);
 }
 
-#assetOverlayRangeOptions2 {
+#assetOverlayRangeOptions5 {
     color: var(--colourGhostWhite);
     font-weight: bold;
 };
@@ -430,7 +431,7 @@ body {
 }
 
 #chartHighlighterPrice {
-    width: 75px;
+    width: 200px;
     text-align: center;
     color: var(--colourCyan);
     position: absolute;
